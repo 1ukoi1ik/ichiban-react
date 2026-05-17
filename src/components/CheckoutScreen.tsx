@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useAppStore, cartTotal } from '../store/useAppStore'
 import { BRANDS } from '../data/brands'
-import { API, genOrderNum } from '../data/api'
+import { API } from '../data/api'
 
 
 function parseAddress(addr: string) {
@@ -169,7 +169,6 @@ export default function CheckoutScreen() {
     if (!items.length) { setError('Корзина пуста'); return }
 
     setLoading(true)
-    const orderNum = await genOrderNum()
     setError('')
 
     try {
@@ -179,10 +178,12 @@ export default function CheckoutScreen() {
         body: JSON.stringify({
           name, phone, address, comment, payment,
           items, total: finalTotal, discount,
-          order_num: orderNum, user_id: userId,
+          user_id: userId,
         }),
       })
       if (!resp.ok) throw new Error('server')
+      const data = await resp.json()
+      const orderNum = data.order_num ?? '#???'
       saveAddress(address)
       saveProfileNameOnly(name)
       if (profile && name.trim()) setProfile({ ...profile, name: name.trim() })
