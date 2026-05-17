@@ -4,7 +4,6 @@ import { useAppStore, cartTotal } from '../store/useAppStore'
 import { BRANDS } from '../data/brands'
 import { API, genOrderNum } from '../data/api'
 
-const DADATA_KEY = import.meta.env.VITE_DADATA_KEY as string
 
 export default function CheckoutScreen() {
   const brandKey = useAppStore((s) => s.brandKey)
@@ -46,13 +45,9 @@ export default function CheckoutScreen() {
     if (q.length < 3) { setDadataSuggestions([]); return }
     dadataTimer.current = setTimeout(async () => {
       try {
-        const r = await fetch('https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Token ${DADATA_KEY}` },
-          body: JSON.stringify({ query: q, count: 5, restrict_value: true, locations: [{ city: 'Луганск' }, { city: 'Луганск', country_iso_code: 'RU' }] }),
-        })
+        const r = await fetch(`${API}/suggest/address?q=${encodeURIComponent(q)}`)
         const data = await r.json()
-        setDadataSuggestions((data.suggestions ?? []).map((s: any) => s.value as string))
+        setDadataSuggestions((data.suggestions ?? []) as string[])
       } catch { /* ignore */ }
     }, 300)
   }, [])
