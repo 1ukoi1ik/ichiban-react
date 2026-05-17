@@ -66,6 +66,11 @@ html, body, #root {
   box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
 .picker-card:active { transform: scale(0.95); }
+.picker-flip-overlay {
+  position: fixed; z-index: 999;
+  overflow: hidden;
+  pointer-events: none;
+}
 .picker-card-img-wrap {
   position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden;
   background: var(--surface);

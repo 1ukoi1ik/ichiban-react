@@ -1,19 +1,25 @@
-import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { BRANDS, BRAND_KEYS, BRAND_THUMBS } from '../data/brands'
 import { useAppStore } from '../store/useAppStore'
 import type { BrandKey } from '../data/types'
 
+type Rect = { top: number; left: number; width: number; height: number }
+
 export default function BrandPicker() {
   const setBrandKey = useAppStore((s) => s.setBrandKey)
   const setScreen = useAppStore((s) => s.setScreen)
-  const [flipping, setFlipping] = useState<BrandKey | null>(null)
+  const [overlay, setOverlay] = useState<{ key: BrandKey; rect: Rect } | null>(null)
+  const lockRef = useRef(false)
 
-  function pick(key: BrandKey) {
-    if (flipping) return
-    setFlipping(key)
+  function pick(key: BrandKey, e: React.MouseEvent<HTMLButtonElement>) {
+    if (lockRef.current) return
+    lockRef.current = true
+    const rect = e.currentTarget.getBoundingClientRect()
     setBrandKey(key)
-    setTimeout(() => setScreen('menu'), 280)
+    setOverlay({ key, rect: { top: rect.top, left: rect.left, width: rect.width, height: rect.height } })
+    // переход экрана на середине флипа
+    setTimeout(() => setScreen('menu'), 320)
   }
 
   return (
@@ -24,22 +30,14 @@ export default function BrandPicker() {
       <div className="picker-grid">
         {BRAND_KEYS.map((key, i) => {
           const brand = BRANDS[key]
-          const isFlipping = flipping === key
           return (
             <motion.button
               key={key}
               className="picker-card"
-              onClick={() => pick(key)}
+              onClick={(e) => pick(key, e)}
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              animate={{
-                opacity: 1, y: 0, scale: 1,
-                rotateY: isFlipping ? 90 : 0,
-              }}
-              transition={isFlipping
-                ? { rotateY: { duration: 0.28, ease: [0.4, 0, 0.2, 1] } }
-                : { delay: i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }
-              }
-              style={{ transformStyle: 'preserve-3d', transformOrigin: 'center center' }}
+              animate={{ opacity: overlay ? (overlay.key === key ? 0 : 1) : 1, y: 0, scale: 1 }}
+              transition={{ delay: overlay ? 0 : i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="picker-card-img-wrap">
                 <img src={BRAND_THUMBS[key]} alt={brand.name} className="picker-card-img" draggable={false} />
@@ -50,6 +48,39 @@ export default function BrandPicker() {
           )
         })}
       </div>
+
+      <AnimatePresence>
+        {overlay && (
+          <motion.div
+            key="flip-overlay"
+            className="picker-flip-overlay"
+            initial={{
+              top: overlay.rect.top,
+              left: overlay.rect.left,
+              width: overlay.rect.width,
+              height: overlay.rect.height,
+              borderRadius: 20,
+              rotateY: 0,
+            }}
+            animate={{
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              borderRadius: 0,
+              rotateY: 90,
+            }}
+            transition={{ duration: 0.38, ease: [0.4, 0, 0.6, 1] }}
+            style={{ perspective: 1200 }}
+          >
+            <img
+              src={BRAND_THUMBS[overlay.key]}
+              alt=""
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
