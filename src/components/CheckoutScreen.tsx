@@ -113,6 +113,19 @@ export default function CheckoutScreen() {
     }).catch(() => {})
   }
 
+  function deleteAddress(addr: string) {
+    const uid = userId ?? window.Telegram?.WebApp?.initDataUnsafe?.user?.id ?? null
+    if (!uid) return
+    fetch(`${API}/profile/address`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: uid, address: addr }),
+    }).catch(() => {})
+    if (profile) {
+      setProfile({ ...profile, addresses: profile.addresses?.filter((a) => a !== addr) ?? [] })
+    }
+  }
+
   function saveProfile(n: string, p: string) {
     const uid = userId ?? window.Telegram?.WebApp?.initDataUnsafe?.user?.id ?? null
     if (!uid) return
@@ -364,16 +377,18 @@ export default function CheckoutScreen() {
             <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 16 }}>Ваши адреса</div>
             {(profile?.addresses ?? []).map((addr) => (
               <div key={addr}
-                onClick={() => {
+                style={{ padding: '12px 0', borderBottom: '1px solid var(--border)', fontSize: 14, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ color: 'var(--sub)', fontSize: 16 }}>📍</span>
+                <span style={{ flex: 1, cursor: 'pointer' }} onClick={() => {
                   const { street: s, house: h, flat: f, entrance: en } = parseAddress(addr)
                   setStreet(s)
                   setHouse(h)
                   setFlat(f)
                   setEntrance(en)
                   setAddrPopupOpen(false)
-                }}
-                style={{ padding: '12px 0', borderBottom: '1px solid var(--border)', fontSize: 14, color: 'var(--text)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{ color: 'var(--sub)', fontSize: 16 }}>📍</span> {addr}
+                }}>{addr}</span>
+                <button onClick={(e) => { e.stopPropagation(); deleteAddress(addr) }}
+                  style={{ background: 'none', border: 'none', color: '#666', fontSize: 16, cursor: 'pointer', padding: '0 4px', lineHeight: 1 }}>✕</button>
               </div>
             ))}
             <button onClick={() => setAddrPopupOpen(false)}
