@@ -49,8 +49,8 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.3, delay: animDelay, ease: [0.22, 1, 0.36, 1] }}
       >
-        <div className="food-card food-card--compact" onClick={(e) => { if ((e.target as HTMLElement).closest('button')) return; onExpand(null, null) }}>
-          <div className={`card-image-wrap card-image-wrap--compact${imgLoaded ? ' img-loaded' : ''}`}>
+        <div className="food-card food-card--compact" onClick={(e) => { if ((e.target as HTMLElement).closest('button')) return }}>
+          <div className={`card-compact-img${imgLoaded ? ' img-loaded' : ''}`}>
             <div className="shimmer-layer" />
             <img
               src={item.img}
@@ -60,31 +60,28 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
               draggable={false}
               onLoad={() => setImgLoaded(true)}
             />
-            <div className="card-grad" />
-          </div>
-          <div className="card-body card-body--compact">
-            <div className="card-name card-name--compact">{item.name}</div>
-            <div className="card-compact-footer">
-              <div className="card-compact-price-block">
-                <span className="card-price--compact">
+            <div className="card-compact-overlay" />
+            <div className="card-compact-info">
+              <div className="card-compact-name">{item.name}</div>
+              <div className="card-compact-bottom">
+                <span className="card-compact-price" style={{ background: `linear-gradient(135deg, ${brandRed}, ${brandOrange})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                   {item.price} ₽
                 </span>
-                <span className="card-weight">{item.weight}</span>
+                {qty > 0 ? (
+                  <div className="qty-ctrl qty-ctrl--compact" onClick={(e) => e.stopPropagation()}>
+                    <button className="qty-btn qty-btn--sm" onClick={() => removeFromCart(item.id)}>−</button>
+                    <span className="qty-num qty-num--sm">{qty}</span>
+                    <button className="qty-btn qty-btn--sm" onClick={() => addToCart(item.id, item.name, item.price, item.img)}>+</button>
+                  </div>
+                ) : (
+                  <button
+                    className="add-btn--compact"
+                    onClick={(e) => { e.stopPropagation(); addToCart(item.id, item.name, item.price, item.img) }}
+                  >
+                    +
+                  </button>
+                )}
               </div>
-              {qty > 0 ? (
-                <div className="qty-ctrl qty-ctrl--compact" onClick={(e) => e.stopPropagation()}>
-                  <button className="qty-btn qty-btn--sm" onClick={() => removeFromCart(item.id)}>−</button>
-                  <span className="qty-num qty-num--sm">{qty}</span>
-                  <button className="qty-btn qty-btn--sm" onClick={() => addToCart(item.id, item.name, item.price, item.img)}>+</button>
-                </div>
-              ) : (
-                <button
-                  className="add-btn add-btn--compact"
-                  onClick={(e) => { e.stopPropagation(); addToCart(item.id, item.name, item.price, item.img) }}
-                >
-                  +
-                </button>
-              )}
             </div>
           </div>
         </div>
