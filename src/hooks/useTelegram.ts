@@ -8,7 +8,7 @@ declare global {
       WebApp: {
         ready(): void
         expand(): void
-        initDataUnsafe?: { user?: { id?: number } }
+        initDataUnsafe?: { user?: { id?: number; first_name?: string; phone_number?: string } }
         HapticFeedback?: {
           notificationOccurred(type: 'error' | 'success' | 'warning'): void
           selectionChanged?(): void
@@ -35,7 +35,26 @@ export function useTelegram() {
       setUserId(uid)
       fetch(`${API}/profile/${uid}`)
         .then((r) => r.json())
-        .then((data) => { if (data.ok && !data.new_client) setProfile(data) })
+        .then((data) => {
+          if (data.ok && !data.new_client) {
+            setProfile(data)
+          } else {
+            // новый клиент — подставляем имя из TG
+            const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user
+            if (tgUser?.first_name) {
+              setProfile({
+                ok: true,
+                new_client: true,
+                name: tgUser.first_name,
+                phone: tgUser.phone_number ?? '',
+                address: '',
+                total_orders: 0,
+                month_sum: 0,
+                discount: 0,
+              })
+            }
+          }
+        })
         .catch(() => {})
     }
 
