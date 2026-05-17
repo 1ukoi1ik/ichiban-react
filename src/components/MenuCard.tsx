@@ -19,9 +19,10 @@ interface Props {
   onExpand: (id: number | null, el: HTMLDivElement | null) => void
   animDelay?: number
   compact?: boolean
+  index?: number
 }
 
-export default function MenuCard({ item, brandRed, brandOrange, expandedId, onExpand, animDelay = 0, compact }: Props) {
+export default function MenuCard({ item, brandRed, brandOrange, expandedId, onExpand, animDelay = 0, compact, index = 0 }: Props) {
   const addToCart = useAppStore((s) => s.addToCart)
   const removeFromCart = useAppStore((s) => s.removeFromCart)
   const cart = useAppStore((s) => s.cart)
@@ -42,20 +43,23 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
   }
 
   if (compact) {
+    const isLeft = index % 2 === 0
+    const origin = isLeft ? 'bottom left' : 'bottom right'
     return (
       <motion.div
+        ref={wrapRef}
         className="card-drum-wrap"
         initial={{ opacity: 0, y: 10, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.3, delay: animDelay, ease: [0.22, 1, 0.36, 1] }}
-        style={{ transformOrigin: 'bottom center', zIndex: isExpanded ? 10 : 1, position: 'relative' }}
+        style={{ transformOrigin: origin, zIndex: isExpanded ? 10 : 1, position: 'relative' }}
       >
         <motion.div
           className="food-card food-card--compact"
           animate={{ scale: isExpanded ? 1.3 : 1 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 22 }}
-          style={{ transformOrigin: 'bottom center' }}
-          onClick={(e) => { if ((e.target as HTMLElement).closest('button')) return; onExpand(isExpanded ? null : item.id, null) }}
+          transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+          style={{ transformOrigin: origin }}
+          onClick={(e) => { if ((e.target as HTMLElement).closest('button')) return; onExpand(isExpanded ? null : item.id, wrapRef.current) }}
         >
           <div className={`card-compact-img${imgLoaded ? ' img-loaded' : ''}`}>
             <div className="shimmer-layer" />
