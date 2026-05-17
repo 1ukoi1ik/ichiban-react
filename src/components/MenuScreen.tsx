@@ -58,13 +58,17 @@ export default function MenuScreen() {
   }, [])
 
   const [autoCard, setAutoCard] = useState(false)
+  const wantsCard = new URLSearchParams(window.location.search).get('card') === '1'
+
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    if (params.get('card') === '1') {
-      setProfileOpen(true)
+    if (wantsCard) setProfileOpen(true)
+  }, [])
+
+  useEffect(() => {
+    if (wantsCard && profile && !profile.new_client && profile.discount > 0 && !autoCard) {
       setAutoCard(true)
     }
-  }, [])
+  }, [profile?.discount])
 
   const filteredItems = currentCat === 'top'
     ? brand.menu.filter((i) => i.tags.includes('hit'))

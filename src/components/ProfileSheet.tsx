@@ -66,10 +66,8 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
   const [showAvatarPicker, setShowAvatarPicker] = useState(false)
 
   useEffect(() => {
-    if (open && autoCard && profile && !profile.new_client && profile.discount > 0) {
-      setShowCard(true)
-    }
-  }, [open, autoCard, profile?.discount])
+    if (autoCard) setShowCard(true)
+  }, [autoCard])
 
   const AVATARS = [
     { url: 'https://storage.yandexcloud.net/ichiban-photos/mal1.png', label: 'Парень 1' },
