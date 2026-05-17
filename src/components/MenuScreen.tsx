@@ -61,14 +61,21 @@ export default function MenuScreen() {
   const wantsCard = new URLSearchParams(window.location.search).get('card') === '1'
 
   useEffect(() => {
-    if (wantsCard) setProfileOpen(true)
+    if (!wantsCard) return
+    setProfileOpen(true)
+    // ждём профиль — проверяем каждые 300мс до 10 секунд
+    let tries = 0
+    const timer = setInterval(() => {
+      tries++
+      const p = useAppStore.getState().profile
+      if (p && !p.new_client && p.discount > 0) {
+        setAutoCard(true)
+        clearInterval(timer)
+      }
+      if (tries > 33) clearInterval(timer)
+    }, 300)
+    return () => clearInterval(timer)
   }, [])
-
-  useEffect(() => {
-    if (wantsCard && profile && !profile.new_client && profile.discount > 0 && !autoCard) {
-      setAutoCard(true)
-    }
-  }, [profile?.discount])
 
   const filteredItems = currentCat === 'top'
     ? brand.menu.filter((i) => i.tags.includes('hit'))
