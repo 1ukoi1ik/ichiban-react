@@ -21,15 +21,17 @@ export default function ActiveOrderBanner({ brandRed }: Props) {
     if (!orderNum) return
     setStep(0)
 
-    const poll = setInterval(async () => {
+    async function fetchStep() {
       try {
-        const r = await fetch(`${API}/order-status/${encodeURIComponent(orderNum)}`)
+        const r = await fetch(`${API}/order-status/${encodeURIComponent(orderNum!)}`)
         const data = await r.json()
         if (data.ok) setStep(data.step)
         if (data.step === 4) clearInterval(poll)
       } catch { /* ignore */ }
-    }, 30_000)
+    }
 
+    fetchStep()
+    const poll = setInterval(fetchStep, 30_000)
     return () => clearInterval(poll)
   }, [orderNum])
 
