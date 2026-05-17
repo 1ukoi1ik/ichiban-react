@@ -53,7 +53,17 @@ export default function CheckoutScreen() {
       if (profile.name) setName(profile.name)
       if (profile.phone) setPhone(profile.phone || '+7')
       const lastAddr = profile.addresses?.[0] ?? profile.address ?? ''
-      if (lastAddr) setStreet(lastAddr)
+      if (lastAddr) {
+        const parts = lastAddr.split(',').map((s: string) => s.trim())
+        const streetPart = parts.find((p: string) => !p.match(/^д\s/i) && !p.match(/^кв\s/i) && !p.match(/^подъезд\s/i)) ?? ''
+        const housePart = (parts.find((p: string) => p.match(/^д\s/i)) ?? '').replace(/^д\s+/i, '')
+        const flatPart = (parts.find((p: string) => p.match(/^кв\s/i)) ?? '').replace(/^кв\s+/i, '')
+        const entrancePart = (parts.find((p: string) => p.match(/^подъезд\s/i)) ?? '').replace(/^подъезд\s+/i, '')
+        setStreet(streetPart)
+        if (housePart) setHouse(housePart)
+        if (flatPart) setFlat(flatPart)
+        if (entrancePart) setEntrance(entrancePart)
+      }
     }
   }, [profile])
 
@@ -86,11 +96,12 @@ export default function CheckoutScreen() {
   }, [])
 
   function saveAddress(addr: string) {
-    if (!userId || !addr.trim()) return
+    const uid = userId ?? window.Telegram?.WebApp?.initDataUnsafe?.user?.id ?? null
+    if (!uid || !addr.trim()) return
     fetch(`${API}/profile/address`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: userId, address: addr.trim() }),
+      body: JSON.stringify({ user_id: uid, address: addr.trim() }),
     }).catch(() => {})
   }
 
