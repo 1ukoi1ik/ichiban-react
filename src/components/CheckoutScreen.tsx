@@ -23,8 +23,11 @@ export default function CheckoutScreen() {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('+7')
   const [phoneError, setPhoneError] = useState('')
-  const [address, setAddress] = useState('')
-  const [addrOpen, setAddrOpen] = useState(false)
+  const [street, setStreet] = useState('')
+  const [house, setHouse] = useState('')
+  const [flat, setFlat] = useState('')
+  const [entrance, setEntrance] = useState('')
+  const [streetOpen, setStreetOpen] = useState(false)
   const [dadataSuggestions, setDadataSuggestions] = useState<string[]>([])
   const dadataTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [comment, setComment] = useState('')
@@ -37,7 +40,7 @@ export default function CheckoutScreen() {
       if (profile.name) setName(profile.name)
       if (profile.phone) setPhone(profile.phone || '+7')
       const lastAddr = profile.addresses?.[0] ?? profile.address ?? ''
-      if (lastAddr) setAddress(lastAddr)
+      if (lastAddr) setStreet(lastAddr)
     }
   }, [profile])
 
@@ -80,7 +83,9 @@ export default function CheckoutScreen() {
     if (!name.trim()) { setError('Введите имя'); return }
     const phoneDigits = phone.replace(/\D/g, '')
     if (phoneDigits.length < 11) { setError('Введите корректный номер телефона'); return }
-    if (!address.trim()) { setError('Введите адрес доставки'); return }
+    if (!street.trim()) { setError('Введите улицу'); return }
+    if (!house.trim()) { setError('Введите номер дома'); return }
+    const address = [street.trim(), `д ${house.trim()}`, flat.trim() ? `кв ${flat.trim()}` : '', entrance.trim() ? `подъезд ${entrance.trim()}` : ''].filter(Boolean).join(', ')
 
     const items = Object.values(cart).map((item) => ({
       name: item.name, qty: item.qty, price: item.price,
@@ -146,47 +151,50 @@ export default function CheckoutScreen() {
               {phoneError && <div style={{ fontSize: 11, color: 'var(--red)', marginTop: 4 }}>{phoneError}</div>}
             </div>
             <div className="form-group" style={{ position: 'relative' }}>
-              <label className="form-label">Адрес доставки</label>
+              <label className="form-label">Улица <span style={{ color: 'var(--red)' }}>*</span></label>
               <input
                 className="form-input"
-                placeholder="Улица, дом, квартира"
-                value={address}
-                onChange={(e) => { setAddress(e.target.value); fetchDadata(e.target.value) }}
-                onFocus={() => setAddrOpen(true)}
-                onBlur={() => setTimeout(() => setAddrOpen(false), 200)}
+                placeholder="ул Советская"
+                value={street}
+                onChange={(e) => { setStreet(e.target.value); fetchDadata(e.target.value) }}
+                onFocus={() => setStreetOpen(true)}
+                onBlur={() => setTimeout(() => setStreetOpen(false), 200)}
               />
-              {addrOpen && (() => {
+              {streetOpen && (() => {
                 const saved = profile?.addresses ?? []
                 const suggestions = dadataSuggestions.filter(s => !saved.includes(s))
                 const all = [...saved, ...suggestions]
                 return all.length > 0 ? (
-                  <div style={{
-                    position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100,
-                    background: 'var(--card)', border: '1px solid var(--border)',
-                    borderRadius: 10, marginTop: 4, overflow: 'hidden',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
-                  }}>
+                  <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, marginTop: 4, overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
                     {saved.map((addr) => (
-                      <div
-                        key={addr}
-                        onMouseDown={() => { setAddress(addr); setAddrOpen(false); setDadataSuggestions([]) }}
-                        style={{ padding: '10px 14px', fontSize: 13, color: 'var(--text)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}
-                      >
+                      <div key={addr} onMouseDown={() => { setStreet(addr); setStreetOpen(false); setDadataSuggestions([]) }}
+                        style={{ padding: '10px 14px', fontSize: 13, color: 'var(--text)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
                         <span style={{ color: 'var(--sub)' }}>🕐</span> {addr}
                       </div>
                     ))}
                     {suggestions.map((addr) => (
-                      <div
-                        key={addr}
-                        onMouseDown={() => { setAddress(addr); setAddrOpen(false); setDadataSuggestions([]) }}
-                        style={{ padding: '10px 14px', fontSize: 13, color: 'var(--text)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}
-                      >
+                      <div key={addr} onMouseDown={() => { setStreet(addr); setStreetOpen(false); setDadataSuggestions([]) }}
+                        style={{ padding: '10px 14px', fontSize: 13, color: 'var(--text)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
                         <span style={{ color: 'var(--sub)' }}>📍</span> {addr}
                       </div>
                     ))}
                   </div>
                 ) : null
               })()}
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+              <div className="form-group">
+                <label className="form-label">Дом <span style={{ color: 'var(--red)' }}>*</span></label>
+                <input className="form-input" placeholder="5" value={house} onChange={(e) => setHouse(e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Квартира</label>
+                <input className="form-input" placeholder="12" value={flat} onChange={(e) => setFlat(e.target.value)} inputMode="numeric" />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Подъезд</label>
+                <input className="form-input" placeholder="2" value={entrance} onChange={(e) => setEntrance(e.target.value)} inputMode="numeric" />
+              </div>
             </div>
             <div className="form-group">
               <label className="form-label">Комментарий</label>
