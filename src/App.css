@@ -119,7 +119,7 @@ html, body, #root {
   display: flex; align-items: center; justify-content: center; gap: 6px;
   padding: 9px 10px; border-radius: 22px;
   border: 1.5px solid var(--border-light); background: var(--card);
-  color: var(--text); font-family: var(--font-body); font-size: 13px; font-weight: 700;
+  color: var(--text); font-family: var(--font-body); font-size: clamp(11px, 3.5vw, 14px); font-weight: 700;
   cursor: pointer; white-space: nowrap; flex: 1; min-width: 0;
   transition: border-color 0.2s, background 0.2s; position: relative;
 }
