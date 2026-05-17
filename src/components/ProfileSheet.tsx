@@ -63,18 +63,18 @@ export default function ProfileSheet({ open, onClose, brandRed, brandOrange }: P
   return (
     <AnimatePresence>
       {open && (
-        <>
           <motion.div
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 999 }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={onClose}
-          />
+          >
           <motion.div
             className="profile-sheet"
             initial={{ scale: 0.88, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.88, opacity: 0 }}
             transition={{ type: 'spring', duration: 0.35, bounce: 0.25 }}
+            onClick={(e) => e.stopPropagation()}
           >
 
             {isNew ? (
@@ -137,8 +137,9 @@ export default function ProfileSheet({ open, onClose, brandRed, brandOrange }: P
               Закрыть
             </button>
           </motion.div>
-        </>
+          </motion.div>
       )}
     </AnimatePresence>
+
   )
 }
