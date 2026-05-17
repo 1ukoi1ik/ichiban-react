@@ -2,22 +2,30 @@ import { useRef, useEffect, useCallback, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BRANDS } from '../data/brands'
 import { useAppStore, cartCount } from '../store/useAppStore'
+import { OPEN_FROM, OPEN_TO } from '../data/api'
 import MenuCard from './MenuCard'
 import CartSheet from './CartSheet'
+import ProfileSheet from './ProfileSheet'
+import ActiveOrderBanner from './ActiveOrderBanner'
 
 const CAT_NAMES: Record<string, string> = {
-  top: '🔥 Хиты',
-  rolls: 'Роллы',
-  sushi: 'Суши',
-  sets: 'Сеты',
-  hot: 'Горячее',
-  pizza: 'Пицца',
-  burgers: 'Бургеры',
-  sides: 'Гарниры',
-  soups: 'Супы',
-  salads: 'Салаты',
-  drinks: 'Напитки',
-  desserts: 'Десерты',
+  top: '🔥 Хиты', rolls: 'Роллы', sushi: 'Суши', sets: 'Сеты',
+  hot: 'Горячее', pizza: 'Пицца', burgers: 'Бургеры', sides: 'Гарниры',
+  soups: 'Супы', salads: 'Салаты', drinks: 'Напитки', desserts: 'Десерты',
+}
+
+const ABOUT_ITEMS = [
+  '⭐ 4.9 · 2 400 отзывов',
+  '🚚 Бесплатная доставка от 500 ₽',
+  '🕐 Работаем с 10:00 до 22:00',
+  '📍 Доставка по всему городу',
+  '📞 +7 (999) 123-45-67',
+  '💬 Среднее время доставки 35–45 мин',
+]
+
+function isOpen() {
+  const h = new Date().getHours()
+  return h >= OPEN_FROM && h < OPEN_TO
 }
 
 export default function MenuScreen() {
@@ -26,16 +34,25 @@ export default function MenuScreen() {
   const setCurrentCat = useAppStore((s) => s.setCurrentCat)
   const setScreen = useAppStore((s) => s.setScreen)
   const cart = useAppStore((s) => s.cart)
+  const profile = useAppStore((s) => s.profile)
   const count = cartCount(cart)
 
   const brand = BRANDS[brandKey]
   const [cartOpen, setCartOpen] = useState(false)
   const [catOpen, setCatOpen] = useState(false)
+  const [aboutOpen, setAboutOpen] = useState(false)
+  const [profileOpen, setProfileOpen] = useState(false)
   const [expandedId, setExpandedId] = useState<number | null>(null)
+  const [open, setOpen] = useState(isOpen())
   const scrollRef = useRef<HTMLDivElement>(null)
   const scrollLockRef = useRef(false)
   const rafRef = useRef<number | null>(null)
   const expandedElRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const interval = setInterval(() => setOpen(isOpen()), 60_000)
+    return () => clearInterval(interval)
+  }, [])
 
   const filteredItems = currentCat === 'top'
     ? brand.menu.filter((i) => i.tags.includes('hit'))
@@ -109,15 +126,11 @@ export default function MenuScreen() {
 
   return (
     <div className="screen screen-menu">
-      {/* Hero — фото бренда с затемнением */}
-      <div id="screen-menu" ref={scrollRef} style={{ position: 'fixed', inset: 0, overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'none' }}>
-        {/* Hero секция */}
+      <div ref={scrollRef} style={{ position: 'fixed', inset: 0, overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'none' }}>
+
+        {/* Hero */}
         <div className="hero">
-          <div
-            id="hero-bg"
-            className="hero-bg loaded"
-            style={{ backgroundImage: `url('${brand.hero}')` }}
-          />
+          <div className="hero-bg loaded" style={{ backgroundImage: `url('${brand.hero}')` }} />
           <div className="hero-overlay" />
           <button className="change-btn" onClick={() => setScreen('picker')}>← Сменить</button>
           <div className="hero-content">
@@ -128,16 +141,27 @@ export default function MenuScreen() {
               {brand.name}
             </div>
             <div className="hero-status-row">
-              <div className="restaurant-badge">● Открыто сейчас</div>
+              <div className={`restaurant-badge${open ? '' : ' closed'}`}>
+                {open ? '● Открыто сейчас' : `● Закрыто · откроем в ${OPEN_FROM}:00`}
+              </div>
+              {profile && (
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', marginTop: 4 }}>
+                  Рады снова видеть, {profile.name.split(' ')[0]}! 👋
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Sticky nav */}
         <div className="sticky-nav" id="sticky-nav">
-          <div className={`cat-trigger${catOpen ? ' open' : ''}`} onClick={() => setCatOpen(!catOpen)}>
+          {/* Категории */}
+          <div className={`cat-trigger${catOpen ? ' open' : ''}`} onClick={() => { setCatOpen(!catOpen); setAboutOpen(false) }}>
             <span>☰</span>
-            <span className="cat-active-label" style={{ background: `linear-gradient(135deg, ${brand.red}, ${brand.orange})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+            <span
+              className="cat-active-label"
+              style={{ background: `linear-gradient(135deg, ${brand.red}, ${brand.orange})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
+            >
               {catLabel}
             </span>
             <span className="cat-trigger-arrow">▼</span>
@@ -156,11 +180,7 @@ export default function MenuScreen() {
                     <div
                       key={cat.key}
                       className={`cat-option${currentCat === cat.key ? ' active' : ''}`}
-                      onClick={() => {
-                        setCurrentCat(cat.key)
-                        setCatOpen(false)
-                        setExpandedId(null)
-                      }}
+                      onClick={() => { setCurrentCat(cat.key); setCatOpen(false); setExpandedId(null) }}
                     >
                       <span className="cat-opt-dot" />
                       {CAT_NAMES[cat.key] ?? cat.label}
@@ -170,9 +190,54 @@ export default function MenuScreen() {
               )}
             </AnimatePresence>
           </div>
+
+          {/* Профиль */}
+          {profile && (
+            <div className="cat-trigger" onClick={() => setProfileOpen(true)}>
+              <span>👤</span>
+              <span className="cat-active-label" style={{ background: `linear-gradient(135deg, ${brand.red}, ${brand.orange})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                Профиль
+              </span>
+            </div>
+          )}
+
+          {/* О нас */}
+          <div
+            className={`cat-trigger about-trigger${aboutOpen ? ' open' : ''}`}
+            style={{ marginLeft: 'auto' }}
+            onClick={() => { setAboutOpen(!aboutOpen); setCatOpen(false) }}
+          >
+            <span>ℹ️</span>
+            <span className="cat-active-label" style={{ background: `linear-gradient(135deg, ${brand.red}, ${brand.orange})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              О нас
+            </span>
+            <span className="cat-trigger-arrow">▼</span>
+
+            <AnimatePresence>
+              {aboutOpen && (
+                <motion.div
+                  className="cat-dropdown about-dropdown open"
+                  initial={{ scale: 0.92, opacity: 0, y: -8 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.92, opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {ABOUT_ITEMS.map((item) => (
+                    <div key={item} className="about-item">{item}</div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
-        {/* Список карточек */}
+        {/* Баннер активного заказа */}
+        <div style={{ padding: '10px 16px 0' }}>
+          <ActiveOrderBanner brandRed={brand.red} />
+        </div>
+
+        {/* Карточки */}
         <div style={{ padding: '12px 16px 0' }}>
           <div className="cards-grid">
             {filteredItems.map((item, idx) => (
@@ -191,11 +256,11 @@ export default function MenuScreen() {
         </div>
       </div>
 
-      {/* FAB корзины — круглая кнопка с badge, как в оригинале */}
+      {/* FAB */}
       <AnimatePresence>
         {count > 0 && (
           <motion.button
-            className={`cart-fab${count > 0 ? ' has-items' : ''}`}
+            className="cart-fab has-items"
             onClick={() => setCartOpen(true)}
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -213,6 +278,13 @@ export default function MenuScreen() {
         open={cartOpen}
         onClose={() => setCartOpen(false)}
         onCheckout={() => { setCartOpen(false); setScreen('checkout') }}
+        brandRed={brand.red}
+        brandOrange={brand.orange}
+      />
+
+      <ProfileSheet
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
         brandRed={brand.red}
         brandOrange={brand.orange}
       />
