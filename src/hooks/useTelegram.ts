@@ -9,6 +9,7 @@ declare global {
         ready(): void
         expand(): void
         initDataUnsafe?: { user?: { id?: number; first_name?: string; phone_number?: string } }
+        requestContact(cb: (ok: boolean, contact: any) => void): void
         HapticFeedback?: {
           notificationOccurred(type: 'error' | 'success' | 'warning'): void
           selectionChanged?(): void

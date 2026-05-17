@@ -192,14 +192,12 @@ export default function MenuScreen() {
           </div>
 
           {/* Профиль */}
-          {profile && (
-            <div className="cat-trigger" onClick={() => setProfileOpen(true)}>
-              <span>👤</span>
-              <span className="cat-active-label" style={{ background: `linear-gradient(135deg, ${brand.red}, ${brand.orange})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                Профиль
-              </span>
-            </div>
-          )}
+          <div className="cat-trigger" onClick={() => setProfileOpen(true)}>
+            <span>👤</span>
+            <span className="cat-active-label" style={{ background: `linear-gradient(135deg, ${brand.red}, ${brand.orange})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              Профиль
+            </span>
+          </div>
 
           {/* О нас */}
           <div
