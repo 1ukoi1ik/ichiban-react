@@ -49,7 +49,7 @@ export default function CheckoutScreen() {
         const r = await fetch('https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Token ${DADATA_KEY}` },
-          body: JSON.stringify({ query: q, count: 5, locations: [{ city: 'Луганск' }] }),
+          body: JSON.stringify({ query: q, count: 5, restrict_value: true, locations: [{ city: 'Луганск' }, { city: 'Луганск', country_iso_code: 'RU' }] }),
         })
         const data = await r.json()
         setDadataSuggestions((data.suggestions ?? []).map((s: any) => s.value as string))
