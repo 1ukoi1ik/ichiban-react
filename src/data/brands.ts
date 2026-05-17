@@ -120,6 +120,16 @@ export const BRANDS: Record<BrandKey, Brand> = {
 
 export const BRAND_KEYS: BrandKey[] = ['sushi', 'pizza', 'burger', 'shawarma']
 
+export const BRAND_THUMBS: Record<BrandKey, string> = {
+  sushi: 'https://storage.yandexcloud.net/ichiban-photos/brands/rolls.png',
+  pizza: 'https://storage.yandexcloud.net/ichiban-photos/brands/pizza.png',
+  burger: 'https://storage.yandexcloud.net/ichiban-photos/brands/burger.png',
+  shawarma: 'https://storage.yandexcloud.net/ichiban-photos/brands/shawarma.png',
+  pasta: 'https://storage.yandexcloud.net/ichiban-photos/brands/pizza.png',
+  georgian: 'https://storage.yandexcloud.net/ichiban-photos/brands/shawarma.png',
+  ramen: 'https://storage.yandexcloud.net/ichiban-photos/brands/rolls.png',
+}
+
 export const BRAND_ICONS: Record<BrandKey, string> = {
   sushi: '🍣',
   pizza: '🍕',
