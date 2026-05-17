@@ -25,6 +25,7 @@ export default function CheckoutScreen() {
   const setOrderNum = useAppStore((s) => s.setOrderNum)
   const setLastOrderItems = useAppStore((s) => s.setLastOrderItems)
   const clearCart = useAppStore((s) => s.clearCart)
+  const setProfile = useAppStore((s) => s.setProfile)
 
   const brand = BRANDS[brandKey]
   const total = cartTotal(cart)
@@ -184,6 +185,7 @@ export default function CheckoutScreen() {
       if (!resp.ok) throw new Error('server')
       saveAddress(address)
       saveProfileNameOnly(name)
+      if (profile && name.trim()) setProfile({ ...profile, name: name.trim() })
       setLastOrderItems(items)
       setOrderNum(orderNum)
       clearCart()
