@@ -336,6 +336,12 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
                       </div>
                     </div>
 
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+                      <div style={{ background: '#fff', borderRadius: 12, padding: 8 }}>
+                        <img src="https://storage.yandexcloud.net/ichiban-photos/qr.webp" alt="QR" style={{ width: 120, height: 120, display: 'block' }} />
+                      </div>
+                    </div>
+
                     <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', lineHeight: 1.5 }}>
                       Покажите эту карту кассиру<br />для получения скидки в заведении
                     </div>
