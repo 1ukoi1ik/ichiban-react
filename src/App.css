@@ -124,6 +124,8 @@ html, body, #root {
   transition: border-color 0.2s, background 0.2s; position: relative;
 }
 .cat-trigger.open { border-color: var(--red); background: rgba(232,50,26,0.08); }
+.grid-toggle-btn { color: var(--sub); transition: color 0.2s, border-color 0.2s, background 0.2s; }
+.grid-toggle-btn.active { color: var(--red); border-color: rgba(232,50,26,0.4); background: rgba(232,50,26,0.08); }
 .cat-trigger-arrow { font-size: 10px; transition: transform 0.25s; opacity: 0.6; }
 .cat-trigger.open .cat-trigger-arrow { transform: rotate(180deg); }
 .cat-dropdown {

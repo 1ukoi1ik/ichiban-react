@@ -224,14 +224,36 @@ export default function MenuScreen() {
           </div>
 
           {/* О нас */}
-          <div
-            className="cat-trigger"
-            style={{ flex: '0 0 auto', padding: '9px 12px' }}
+          <motion.div
+            className={`cat-trigger grid-toggle-btn${gridCols === 2 ? ' active' : ''}`}
+            style={{ flex: '0 0 auto', padding: '8px 10px' }}
             onClick={(e) => { e.stopPropagation(); setGridCols(gridCols === 1 ? 2 : 1) }}
-            title={gridCols === 1 ? 'Сетка 2×' : 'Список'}
+            whileTap={{ scale: 0.88 }}
+            transition={{ type: 'spring', duration: 0.25, bounce: 0.4 }}
           >
-            {gridCols === 1 ? '⊞' : '☰'}
-          </div>
+            <motion.svg
+              width="18" height="18" viewBox="0 0 18 18" fill="none"
+              animate={{ rotate: gridCols === 2 ? 90 : 0, opacity: 1 }}
+              transition={{ duration: 0.25, ease: [0.34, 1.56, 0.64, 1] }}
+            >
+              {gridCols === 1 ? (
+                // 2×2 сетка
+                <>
+                  <rect x="1" y="1" width="7" height="7" rx="2" fill="currentColor" opacity="0.9"/>
+                  <rect x="10" y="1" width="7" height="7" rx="2" fill="currentColor" opacity="0.9"/>
+                  <rect x="1" y="10" width="7" height="7" rx="2" fill="currentColor" opacity="0.9"/>
+                  <rect x="10" y="10" width="7" height="7" rx="2" fill="currentColor" opacity="0.9"/>
+                </>
+              ) : (
+                // список
+                <>
+                  <rect x="1" y="2" width="16" height="3" rx="1.5" fill="currentColor" opacity="0.9"/>
+                  <rect x="1" y="7.5" width="16" height="3" rx="1.5" fill="currentColor" opacity="0.9"/>
+                  <rect x="1" y="13" width="16" height="3" rx="1.5" fill="currentColor" opacity="0.9"/>
+                </>
+              )}
+            </motion.svg>
+          </motion.div>
 
           <div
             className={`cat-trigger about-trigger${aboutOpen ? ' open' : ''}`}
