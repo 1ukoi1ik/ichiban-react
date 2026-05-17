@@ -16,7 +16,6 @@ export default function BrandPicker() {
     <div className="screen screen-picker">
       <div className="picker-header">
         <h1 className="picker-title">Выберите доставку</h1>
-        <p className="picker-sub">Выберите кухню</p>
       </div>
       <div className="picker-grid">
         {BRAND_KEYS.map((key, i) => {
