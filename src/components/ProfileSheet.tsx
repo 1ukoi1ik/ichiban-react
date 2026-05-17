@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '../store/useAppStore'
 import { API } from '../data/api'
@@ -9,6 +9,7 @@ interface Props {
   onHistory: () => void
   brandRed: string
   brandOrange: string
+  autoCard?: boolean
 }
 
 function guessGender(name: string) {
@@ -57,12 +58,18 @@ function requestPhone(setProfile: (p: any) => void) {
   _tg.requestContact()
 }
 
-export default function ProfileSheet({ open, onClose, onHistory, brandRed, brandOrange }: Props) {
+export default function ProfileSheet({ open, onClose, onHistory, brandRed, brandOrange, autoCard }: Props) {
   const profile = useAppStore((s) => s.profile)
   const setProfile = useAppStore((s) => s.setProfile)
   const isNew = !profile || profile.new_client
   const [showCard, setShowCard] = useState(false)
   const [showAvatarPicker, setShowAvatarPicker] = useState(false)
+
+  useEffect(() => {
+    if (open && autoCard && profile && !profile.new_client && profile.discount > 0) {
+      setShowCard(true)
+    }
+  }, [open, autoCard])
 
   const AVATARS = [
     { url: 'https://storage.yandexcloud.net/ichiban-photos/mal1.png', label: 'Парень 1' },

@@ -57,6 +57,15 @@ export default function MenuScreen() {
     return () => clearInterval(interval)
   }, [])
 
+  const [autoCard, setAutoCard] = useState(false)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('card') === '1') {
+      setProfileOpen(true)
+      setAutoCard(true)
+    }
+  }, [])
+
   const filteredItems = currentCat === 'top'
     ? brand.menu.filter((i) => i.tags.includes('hit'))
     : brand.menu.filter((i) => i.cat === currentCat)
@@ -281,10 +290,11 @@ export default function MenuScreen() {
 
       <ProfileSheet
         open={profileOpen}
-        onClose={() => setProfileOpen(false)}
+        onClose={() => { setProfileOpen(false); setAutoCard(false) }}
         onHistory={() => { setProfileOpen(false); setHistoryOpen(true) }}
         brandRed={brand.red}
         brandOrange={brand.orange}
+        autoCard={autoCard}
       />
 
       <HistorySheet
