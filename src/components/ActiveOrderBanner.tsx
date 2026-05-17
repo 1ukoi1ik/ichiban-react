@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '../store/useAppStore'
 import { API } from '../data/api'
 
+type OrderItem = { name: string; qty: number; price: number }
+
 const STEP_LABELS: Record<number, string> = {
   0: 'Отправлен', 1: 'Принят ✓', 2: 'Готовим 👨‍🍳', 3: 'В пути 🛵', 4: 'Доставлен 🏠',
 }
@@ -15,14 +17,17 @@ interface Props {
 export default function ActiveOrderBanner({ brandRed, brandOrange }: Props) {
   const orderNum = useAppStore((s) => s.orderNum)
   const setOrderNum = useAppStore((s) => s.setOrderNum)
-  const lastOrderItems = useAppStore((s) => s.lastOrderItems)
+  const storedItems = useAppStore((s) => s.lastOrderItems)
+  const userId = useAppStore((s) => s.userId)
   const [step, setStep] = useState(0)
+  const [items, setItems] = useState<OrderItem[]>(storedItems)
   const [popupOpen, setPopupOpen] = useState(false)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
     if (!orderNum) return
     setStep(0)
+    setItems(storedItems)
 
     async function fetchStep() {
       try {
@@ -38,17 +43,30 @@ export default function ActiveOrderBanner({ brandRed, brandOrange }: Props) {
       } catch { /* ignore */ }
     }
 
+    async function fetchItems() {
+      if (storedItems.length > 0 || !userId) return
+      try {
+        const r = await fetch(`${API}/orders/history/${userId}`)
+        const data = await r.json()
+        if (data.ok) {
+          const found = data.orders.find((o: any) => o.num === orderNum)
+          if (found?.items?.length) setItems(found.items)
+        }
+      } catch { /* ignore */ }
+    }
+
     fetchStep()
+    fetchItems()
     pollRef.current = setInterval(fetchStep, 30_000)
     return () => {
       if (pollRef.current) clearInterval(pollRef.current)
     }
-  }, [orderNum])
+  }, [orderNum]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!orderNum) return null
 
   const delivered = step === 4
-  const total = lastOrderItems.reduce((s, i) => s + i.price * i.qty, 0)
+  const total = items.reduce((s, i) => s + i.price * i.qty, 0)
 
   return (
     <>
@@ -123,10 +141,10 @@ export default function ActiveOrderBanner({ brandRed, brandOrange }: Props) {
               </div>
 
               {/* Состав */}
-              {lastOrderItems.length > 0 && (
+              {items.length > 0 && (
                 <>
                   <div style={{ fontSize: 12, color: '#888', marginBottom: 8 }}>Состав заказа</div>
-                  {lastOrderItems.map((item, i) => (
+                  {items.map((item, i) => (
                     <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--border)', fontSize: 14, color: 'var(--text)' }}>
                       <span>{item.name} × {item.qty}</span>
                       <span style={{ color: brandOrange }}>{(item.price * item.qty).toLocaleString()} ₽</span>
