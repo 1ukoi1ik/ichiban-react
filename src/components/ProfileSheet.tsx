@@ -74,12 +74,8 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
   const discountNext = profile && !isNew
     ? TIERS.find((t) => (profile!.total_orders ?? 0) < t.at) ?? null
     : null
-  const discountPrev = profile && !isNew && discountNext
-    ? TIERS.slice(0, TIERS.indexOf(discountNext)).slice(-1)[0] ?? null
-    : null
-  const progressFrom = discountPrev ? discountPrev.at : 0
   const progressPct = discountNext
-    ? Math.round(((profile!.total_orders - progressFrom) / (discountNext.at - progressFrom)) * 100)
+    ? Math.round(((profile!.total_orders) / discountNext.at) * 100)
     : 100
 
   return (
@@ -157,9 +153,10 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
                     </div>
                     <div style={{ position: 'relative', height: 8, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
                       <motion.div
+                        key={open ? 'open' : 'closed'}
                         initial={{ width: 0 }}
                         animate={{ width: `${progressPct}%` }}
-                        transition={{ duration: 0.7, ease: 'easeOut' }}
+                        transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
                         style={{
                           position: 'absolute', inset: 0,
                           background: `linear-gradient(90deg, ${brandRed}, ${brandOrange})`,
