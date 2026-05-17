@@ -55,20 +55,24 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
         {/* Image / Gallery */}
         {hasGallery ? (
           <div className="card-gallery-wrap">
-            <div className="card-gallery" style={{ transform: `translateX(-${imgIdx * 100}%)`, transition: 'transform 0.3s ease' }}>
+            <div
+              className="card-gallery"
+              onScroll={(e) => {
+                const el = e.currentTarget
+                const idx = Math.round(el.scrollLeft / el.offsetWidth)
+                setImgIdx(idx)
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
               {images.map((src, i) => (
                 <div key={i} className="card-gallery-slide">
                   <img src={src} alt={item.name} loading="lazy" draggable={false} className="loaded" />
                 </div>
               ))}
             </div>
-            <div className="card-gallery-dots" id={`dots-${item.id}`}>
+            <div className="card-gallery-dots">
               {images.map((_, i) => (
-                <button
-                  key={i}
-                  className={`card-gallery-dot${i === imgIdx ? ' active' : ''}`}
-                  onClick={() => setImgIdx(i)}
-                />
+                <span key={i} className={`card-gallery-dot${i === imgIdx ? ' active' : ''}`} />
               ))}
             </div>
           </div>
