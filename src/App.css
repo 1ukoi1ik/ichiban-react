@@ -356,6 +356,32 @@ html, body, #root {
 .cart-total-sum { font-family: var(--font-display); font-size: 20px; font-weight: 900; }
 
 /* ══════════ BUTTONS ══════════ */
+.history-open-btn {
+  width: 100%; margin-top: 10px; background: none; border: 1px solid var(--border);
+  border-radius: 12px; color: #aaa; font-size: 14px; padding: 11px; cursor: pointer;
+  font-family: inherit;
+}
+.history-order {
+  padding: 14px 16px; border-bottom: 1px solid var(--border);
+}
+.history-order-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+}
+.history-order-num { font-weight: 700; color: var(--fg); }
+.history-order-date { font-size: 12px; color: #888; }
+.history-order-item {
+  display: flex; justify-content: space-between; font-size: 13px; color: #aaa; padding: 2px 0;
+}
+.history-order-footer {
+  display: flex; justify-content: space-between; align-items: center; margin-top: 8px;
+}
+.history-order-step { font-size: 12px; color: #666; }
+.history-order-total { font-size: 14px; font-weight: 600; }
+.history-repeat-btn {
+  margin-top: 10px; width: 100%; padding: 9px; color: #fff; border: none;
+  border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;
+}
+
 .btn-primary {
   width: 100%; padding: 16px; border-radius: 16px; border: none;
   background: linear-gradient(135deg, var(--red), var(--orange));
