@@ -48,6 +48,7 @@ export default function CheckoutScreen() {
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({})
   const [addrPopupOpen, setAddrPopupOpen] = useState(false)
+  const [confirmDeleteAddr, setConfirmDeleteAddr] = useState<string | null>(null)
 
   const nameRef = useRef<HTMLInputElement>(null)
   const phoneRef = useRef<HTMLInputElement>(null)
@@ -376,19 +377,29 @@ export default function CheckoutScreen() {
             onClick={(e) => e.stopPropagation()}>
             <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 16 }}>Ваши адреса</div>
             {(profile?.addresses ?? []).map((addr) => (
-              <div key={addr}
-                style={{ padding: '12px 0', borderBottom: '1px solid var(--border)', fontSize: 14, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{ color: 'var(--sub)', fontSize: 16 }}>📍</span>
-                <span style={{ flex: 1, cursor: 'pointer' }} onClick={() => {
-                  const { street: s, house: h, flat: f, entrance: en } = parseAddress(addr)
-                  setStreet(s)
-                  setHouse(h)
-                  setFlat(f)
-                  setEntrance(en)
-                  setAddrPopupOpen(false)
-                }}>{addr}</span>
-                <button onClick={(e) => { e.stopPropagation(); deleteAddress(addr) }}
-                  style={{ background: 'none', border: 'none', color: '#666', fontSize: 16, cursor: 'pointer', padding: '0 4px', lineHeight: 1 }}>✕</button>
+              <div key={addr} style={{ borderBottom: '1px solid var(--border)' }}>
+                <div style={{ padding: '12px 0', fontSize: 14, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ color: 'var(--sub)', fontSize: 16 }}>📍</span>
+                  <span style={{ flex: 1, cursor: 'pointer' }} onClick={() => {
+                    const { street: s, house: h, flat: f, entrance: en } = parseAddress(addr)
+                    setStreet(s); setHouse(h); setFlat(f); setEntrance(en)
+                    setAddrPopupOpen(false); setConfirmDeleteAddr(null)
+                  }}>{addr}</span>
+                  <button onClick={(e) => { e.stopPropagation(); setConfirmDeleteAddr(confirmDeleteAddr === addr ? null : addr) }}
+                    style={{ background: 'none', border: 'none', color: '#666', fontSize: 16, cursor: 'pointer', padding: '0 4px', lineHeight: 1 }}>✕</button>
+                </div>
+                {confirmDeleteAddr === addr && (
+                  <div style={{ display: 'flex', gap: 8, paddingBottom: 10 }}>
+                    <button onClick={() => setConfirmDeleteAddr(null)}
+                      style={{ flex: 1, padding: '7px 0', background: 'var(--card-hover)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)', fontSize: 12, cursor: 'pointer' }}>
+                      Отмена
+                    </button>
+                    <button onClick={() => { deleteAddress(addr); setConfirmDeleteAddr(null) }}
+                      style={{ flex: 1, padding: '7px 0', background: 'rgba(232,50,26,0.12)', border: '1px solid rgba(232,50,26,0.3)', borderRadius: 8, color: '#E8321A', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                      Удалить
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
             <button onClick={() => setAddrPopupOpen(false)}
