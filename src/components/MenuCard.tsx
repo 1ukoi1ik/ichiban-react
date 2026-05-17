@@ -34,7 +34,7 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
   const hasGallery = images.length > 1
 
   function handleClick(e: React.MouseEvent) {
-    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('.card-gallery-wrap')) return
+    if ((e.target as HTMLElement).closest('button')) return
     onExpand(isExpanded ? null : item.id, wrapRef.current)
   }
 
@@ -54,7 +54,7 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
       >
         {/* Image / Gallery */}
         {hasGallery ? (
-          <div className="card-gallery-wrap" onClick={(e) => e.stopPropagation()}>
+          <div className="card-gallery-wrap">
             <div className="card-gallery" style={{ transform: `translateX(-${imgIdx * 100}%)`, transition: 'transform 0.3s ease' }}>
               {images.map((src, i) => (
                 <div key={i} className="card-gallery-slide">
@@ -117,19 +117,20 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
             </div>
           </div>
 
-          <button
-            className={`add-btn${qty > 0 ? ' in-cart' : ''}`}
-            onClick={(e) => {
-              e.stopPropagation()
-              if (qty > 0) {
-                removeFromCart(item.id)
-              } else {
-                addToCart(item.id, item.name, item.price, item.img)
-              }
-            }}
-          >
-            {qty > 0 ? `🛒 В корзине: ${qty}` : 'Добавить в корзину'}
-          </button>
+          {qty > 0 ? (
+            <div className="qty-ctrl card-qty" onClick={(e) => e.stopPropagation()}>
+              <button className="qty-btn" onClick={() => removeFromCart(item.id)}>−</button>
+              <span className="qty-num">{qty}</span>
+              <button className="qty-btn" onClick={() => addToCart(item.id, item.name, item.price, item.img)}>+</button>
+            </div>
+          ) : (
+            <button
+              className="add-btn"
+              onClick={(e) => { e.stopPropagation(); addToCart(item.id, item.name, item.price, item.img) }}
+            >
+              Добавить в корзину
+            </button>
+          )}
         </div>
       </motion.div>
     </motion.div>

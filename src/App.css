@@ -330,6 +330,7 @@ html, body, #root {
 .cart-item-price { font-size: 13px; font-weight: 800; }
 
 .qty-ctrl { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.card-qty { margin-top: 12px; width: 100%; justify-content: space-between; background: var(--card-hover); border-radius: 14px; padding: 4px 8px; }
 .qty-btn {
   width: 30px; height: 30px; border-radius: 50%;
   border: 1.5px solid var(--border-light); background: var(--card);
