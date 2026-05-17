@@ -18,9 +18,9 @@ export default function CheckoutScreen() {
   const discount = profile?.discount ?? 0
   const finalTotal = discount ? Math.round(total * (1 - discount / 100)) : total
 
-  const [name, setName] = useState(profile?.name ?? '')
-  const [phone, setPhone] = useState(profile?.phone ?? '')
-  const [address, setAddress] = useState(profile?.address ?? '')
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [address, setAddress] = useState('')
   const [comment, setComment] = useState('')
   const [payment, setPayment] = useState('Наличными курьеру')
   const [loading, setLoading] = useState(false)
@@ -28,20 +28,18 @@ export default function CheckoutScreen() {
 
   useEffect(() => {
     if (profile) {
-      setName(profile.name || '')
-      setPhone(profile.phone || '')
-      setAddress(profile.address || '')
+      if (profile.name) setName(profile.name)
+      if (profile.phone) setPhone(profile.phone)
+      if (profile.address) setAddress(profile.address)
     }
   }, [profile])
 
   async function placeOrder() {
     if (!name.trim()) { setError('Введите имя'); return }
-    if (!address.trim()) { setError('Введите адрес'); return }
+    if (!address.trim()) { setError('Введите адрес доставки'); return }
 
-    const items = Object.entries(cart).map(([, item]) => ({
-      name: item.name,
-      qty: item.qty,
-      price: item.price,
+    const items = Object.values(cart).map((item) => ({
+      name: item.name, qty: item.qty, price: item.price,
     }))
     if (!items.length) { setError('Корзина пуста'); return }
 
@@ -56,8 +54,7 @@ export default function CheckoutScreen() {
         body: JSON.stringify({
           name, phone, address, comment, payment,
           items, total: finalTotal, discount,
-          order_num: orderNum,
-          user_id: userId,
+          order_num: orderNum, user_id: userId,
         }),
       })
       if (!resp.ok) throw new Error('server')
@@ -65,73 +62,95 @@ export default function CheckoutScreen() {
       clearCart()
       setScreen('success')
     } catch {
-      setError('Ошибка отправки заказа. Попробуйте ещё раз.')
+      setError('Ошибка отправки. Попробуйте ещё раз.')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="screen screen-checkout">
-      <div className="checkout-header" style={{ background: `linear-gradient(135deg, ${brand.red}, ${brand.orange})` }}>
-        <button className="btn-back" onClick={() => setScreen('menu')}>←</button>
-        <span>Оформление заказа</span>
+    <div className="screen-checkout">
+      <div className="page-header">
+        <button className="back-btn" onClick={() => setScreen('menu')}>‹</button>
+        <div className="page-title">Оформление заказа</div>
       </div>
 
-      <div className="checkout-scroll">
+      <div className="form-scroll">
         <motion.div
-          className="checkout-form"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h3>Контакты</h3>
-          <input placeholder="Ваше имя *" value={name} onChange={(e) => setName(e.target.value)} />
-          <input placeholder="Телефон" value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" />
-
-          <h3>Доставка</h3>
-          <input placeholder="Адрес доставки *" value={address} onChange={(e) => setAddress(e.target.value)} />
-          <textarea placeholder="Комментарий к заказу" value={comment} onChange={(e) => setComment(e.target.value)} rows={2} />
-
-          <h3>Оплата</h3>
-          {['Наличными курьеру', 'Картой курьеру', 'Картой онлайн'].map((p) => (
-            <label key={p} className="radio-row">
-              <input type="radio" name="payment" checked={payment === p} onChange={() => setPayment(p)} />
-              {p}
-            </label>
-          ))}
-
-          <h3>Состав заказа</h3>
-          <div className="checkout-items">
-            {Object.values(cart).map((item, i) => (
-              <div key={i} className="checkout-item">
-                <span>{item.name} × {item.qty}</span>
-                <span>{(item.price * item.qty).toLocaleString()} ₽</span>
-              </div>
-            ))}
-            {discount > 0 && (
-              <div className="checkout-item discount">
-                <span>Скидка {discount}%</span>
-                <span>−{(total - finalTotal).toLocaleString()} ₽</span>
-              </div>
-            )}
-            <div className="checkout-total">
-              <span>Итого</span>
-              <span>{finalTotal.toLocaleString()} ₽</span>
+          <div className="form-section">
+            <div className="form-group">
+              <label className="form-label">Ваше имя</label>
+              <input className="form-input" placeholder="Иван Иванов" value={name} onChange={(e) => setName(e.target.value)} />
             </div>
+            <div className="form-group">
+              <label className="form-label">Номер телефона</label>
+              <input className="form-input" type="tel" placeholder="+7 (000) 000-00-00" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Адрес доставки</label>
+              <input className="form-input" placeholder="Улица, дом, квартира" value={address} onChange={(e) => setAddress(e.target.value)} />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Комментарий</label>
+              <textarea className="form-input form-textarea" rows={2} placeholder="Код домофона, этаж, пожелания..." value={comment} onChange={(e) => setComment(e.target.value)} />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Оплата</label>
+              <div className="radio-group">
+                {['Наличными курьеру', 'Картой курьеру', 'Картой онлайн'].map((p) => (
+                  <label key={p} className="radio-row">
+                    <input type="radio" name="payment" checked={payment === p} onChange={() => setPayment(p)} />
+                    {p}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Ваш заказ</label>
+              <div className="order-summary">
+                {Object.values(cart).map((item, i) => (
+                  <div key={i} className="order-summary-item">
+                    <span>{item.name} × {item.qty}</span>
+                    <span>{(item.price * item.qty).toLocaleString()} ₽</span>
+                  </div>
+                ))}
+                {discount > 0 && (
+                  <div className="order-summary-item" style={{ color: '#34C759' }}>
+                    <span>Скидка {discount}%</span>
+                    <span>−{(total - finalTotal).toLocaleString()} ₽</span>
+                  </div>
+                )}
+              </div>
+              <div className="order-total-row">
+                <span>Итого</span>
+                <span
+                  style={{ background: `linear-gradient(135deg, ${brand.red}, ${brand.orange})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
+                >
+                  {finalTotal.toLocaleString()} ₽
+                </span>
+              </div>
+            </div>
+
+            {error && <p className="form-error">{error}</p>}
           </div>
-
-          {error && <p className="checkout-error">{error}</p>}
-
-          <button
-            className="btn-primary"
-            style={{ background: brand.red }}
-            onClick={placeOrder}
-            disabled={loading}
-          >
-            {loading ? 'Отправляем...' : `Заказать на ${finalTotal.toLocaleString()} ₽`}
-          </button>
         </motion.div>
+      </div>
+
+      <div className="checkout-footer">
+        <button
+          className="btn-primary"
+          style={{ background: `linear-gradient(135deg, ${brand.red}, ${brand.orange})` }}
+          onClick={placeOrder}
+          disabled={loading}
+        >
+          {loading ? 'Отправляем...' : `Заказать — ${finalTotal.toLocaleString()} ₽`}
+        </button>
       </div>
     </div>
   )
