@@ -129,7 +129,7 @@ export default function MenuScreen() {
 
   return (
     <div className="screen screen-menu">
-      <div ref={scrollRef} style={{ position: 'fixed', inset: 0, overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'none' }}>
+      <div ref={scrollRef} style={{ position: 'fixed', inset: 0, overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'none' }} onClick={() => { setCatOpen(false); setAboutOpen(false) }}>
 
         {/* Hero */}
         <div className="hero">
@@ -159,7 +159,7 @@ export default function MenuScreen() {
         {/* Sticky nav */}
         <div className="sticky-nav" id="sticky-nav">
           {/* Категории */}
-          <div className={`cat-trigger${catOpen ? ' open' : ''}`} onClick={() => { setCatOpen(!catOpen); setAboutOpen(false) }}>
+          <div className={`cat-trigger${catOpen ? ' open' : ''}`} onClick={(e) => { e.stopPropagation(); setCatOpen(!catOpen); setAboutOpen(false) }}>
             <span>☰</span>
             <span
               className="cat-active-label"
@@ -195,7 +195,7 @@ export default function MenuScreen() {
           </div>
 
           {/* Профиль */}
-          <div className="cat-trigger" onClick={() => setProfileOpen(true)}>
+          <div className="cat-trigger" onClick={(e) => { e.stopPropagation(); setProfileOpen(true) }}>
             <span>👤</span>
             <span className="cat-active-label" style={{ background: `linear-gradient(135deg, ${brand.red}, ${brand.orange})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
               Профиль
@@ -206,7 +206,7 @@ export default function MenuScreen() {
           <div
             className={`cat-trigger about-trigger${aboutOpen ? ' open' : ''}`}
             style={{ marginLeft: 'auto' }}
-            onClick={() => { setAboutOpen(!aboutOpen); setCatOpen(false) }}
+            onClick={(e) => { e.stopPropagation(); setAboutOpen(!aboutOpen); setCatOpen(false) }}
           >
             <span>ℹ️</span>
             <span className="cat-active-label" style={{ background: `linear-gradient(135deg, ${brand.red}, ${brand.orange})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
