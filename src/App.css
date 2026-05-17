@@ -180,7 +180,7 @@ html, body, #root {
   border-radius: 16px; overflow: hidden;
   border: 1px solid var(--border);
 }
-.food-card--compact:active { opacity: 0.85; }
+.food-card--compact:active { opacity: 1; }
 
 /* Вся карточка — это картинка с текстом поверх */
 .card-compact-img {

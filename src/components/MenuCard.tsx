@@ -57,7 +57,7 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
         <motion.div
           className="food-card food-card--compact"
           animate={{ scale: isExpanded ? 1.3 : 1 }}
-          transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+          transition={{ type: 'tween', duration: 0.28, ease: [0.34, 1.2, 0.64, 1] }}
           style={{ transformOrigin: origin }}
           onClick={(e) => { if ((e.target as HTMLElement).closest('button')) return; onExpand(isExpanded ? null : item.id, wrapRef.current) }}
         >
