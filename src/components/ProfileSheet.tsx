@@ -5,6 +5,7 @@ import { API } from '../data/api'
 interface Props {
   open: boolean
   onClose: () => void
+  onHistory: () => void
   brandRed: string
   brandOrange: string
 }
@@ -49,7 +50,7 @@ function requestPhone(userId: number | null, setProfile: (p: any) => void) {
   _tg.requestContact()
 }
 
-export default function ProfileSheet({ open, onClose, brandRed, brandOrange }: Props) {
+export default function ProfileSheet({ open, onClose, onHistory, brandRed, brandOrange }: Props) {
   const profile = useAppStore((s) => s.profile)
   const userId = useAppStore((s) => s.userId)
   const setProfile = useAppStore((s) => s.setProfile)
@@ -140,7 +141,15 @@ export default function ProfileSheet({ open, onClose, brandRed, brandOrange }: P
               </>
             )}
 
-            <button onClick={onClose} style={{ width: '100%', marginTop: 20, padding: 13, background: 'var(--card-hover)', border: 'none', borderRadius: 12, color: '#aaa', fontSize: 14, cursor: 'pointer' }}>
+            {!isNew && (
+              <button
+                onClick={() => { onClose(); onHistory() }}
+                style={{ width: '100%', marginTop: 16, padding: 13, background: 'var(--card-hover)', border: '1px solid var(--border)', borderRadius: 12, color: 'var(--text)', fontSize: 14, cursor: 'pointer' }}
+              >
+                🕐 История заказов
+              </button>
+            )}
+            <button onClick={onClose} style={{ width: '100%', marginTop: 8, padding: 13, background: 'transparent', border: 'none', borderRadius: 12, color: '#666', fontSize: 14, cursor: 'pointer' }}>
               Закрыть
             </button>
           </motion.div>

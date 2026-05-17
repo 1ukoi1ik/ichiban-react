@@ -1,22 +1,20 @@
-import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore, cartTotal } from '../store/useAppStore'
-import HistorySheet from './HistorySheet'
 
 interface Props {
   open: boolean
   onClose: () => void
   onCheckout: () => void
+  onHistory: () => void
   brandRed: string
   brandOrange: string
 }
 
-export default function CartSheet({ open, onClose, onCheckout, brandRed, brandOrange }: Props) {
+export default function CartSheet({ open, onClose, onCheckout, onHistory, brandRed, brandOrange }: Props) {
   const cart = useAppStore((s) => s.cart)
   const addToCart = useAppStore((s) => s.addToCart)
   const setQty = useAppStore((s) => s.setQty)
   const profile = useAppStore((s) => s.profile)
-  const [historyOpen, setHistoryOpen] = useState(false)
 
   const total = cartTotal(cart)
   const discount = profile?.discount ?? 0
@@ -102,20 +100,13 @@ export default function CartSheet({ open, onClose, onCheckout, brandRed, brandOr
                 Оформить заказ — {finalTotal.toLocaleString()} ₽
               </button>
             )}
-            <button className="history-open-btn" onClick={() => setHistoryOpen(true)}>
+            <button className="history-open-btn" onClick={onHistory}>
               🕐 Прошлые заказы
             </button>
           </div>
         </motion.div>
       )}
     </AnimatePresence>
-
-    <HistorySheet
-      open={historyOpen}
-      onClose={() => setHistoryOpen(false)}
-      brandRed={brandRed}
-      brandOrange={brandOrange}
-    />
     </>
   )
 }

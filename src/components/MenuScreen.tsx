@@ -6,6 +6,7 @@ import { OPEN_FROM, OPEN_TO } from '../data/api'
 import MenuCard from './MenuCard'
 import CartSheet from './CartSheet'
 import ProfileSheet from './ProfileSheet'
+import HistorySheet from './HistorySheet'
 import ActiveOrderBanner from './ActiveOrderBanner'
 
 const CAT_NAMES: Record<string, string> = {
@@ -42,6 +43,7 @@ export default function MenuScreen() {
   const [catOpen, setCatOpen] = useState(false)
   const [aboutOpen, setAboutOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
+  const [historyOpen, setHistoryOpen] = useState(false)
   const [expandedId, setExpandedId] = useState<number | null>(null)
   const [open, setOpen] = useState(isOpen())
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -271,6 +273,7 @@ export default function MenuScreen() {
         open={cartOpen}
         onClose={() => setCartOpen(false)}
         onCheckout={() => { setCartOpen(false); setScreen('checkout') }}
+        onHistory={() => { setCartOpen(false); setHistoryOpen(true) }}
         brandRed={brand.red}
         brandOrange={brand.orange}
       />
@@ -278,6 +281,14 @@ export default function MenuScreen() {
       <ProfileSheet
         open={profileOpen}
         onClose={() => setProfileOpen(false)}
+        onHistory={() => { setProfileOpen(false); setHistoryOpen(true) }}
+        brandRed={brand.red}
+        brandOrange={brand.orange}
+      />
+
+      <HistorySheet
+        open={historyOpen}
+        onClose={() => setHistoryOpen(false)}
         brandRed={brand.red}
         brandOrange={brand.orange}
       />
