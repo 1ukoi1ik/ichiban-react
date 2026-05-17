@@ -65,7 +65,7 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
           <div className="card-body card-body--compact">
             <div className="card-name card-name--compact">{item.name}</div>
             <div className="card-compact-footer">
-              <div>
+              <div className="card-compact-price-block">
                 <span
                   className="card-price card-price--compact"
                   style={{ background: `linear-gradient(135deg, ${brandRed}, ${brandOrange})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
