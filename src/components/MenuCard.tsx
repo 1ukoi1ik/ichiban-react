@@ -44,7 +44,7 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
 
   if (compact) {
     const isLeft = index % 2 === 0
-    const origin = isLeft ? 'bottom left' : 'bottom right'
+    const origin = isLeft ? 'top left' : 'top right'
     return (
       <motion.div
         ref={wrapRef}
@@ -52,7 +52,7 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
         initial={{ opacity: 0, y: 10, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.3, delay: animDelay, ease: [0.22, 1, 0.36, 1] }}
-        style={{ transformOrigin: origin, zIndex: isExpanded ? 10 : 1, position: 'relative' }}
+        style={{ zIndex: isExpanded ? 10 : 1, position: 'relative' }}
       >
         <motion.div
           className="food-card food-card--compact"
