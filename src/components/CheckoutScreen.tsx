@@ -35,6 +35,7 @@ export default function CheckoutScreen() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({})
+  const [addrPopupOpen, setAddrPopupOpen] = useState(false)
 
   const nameRef = useRef<HTMLInputElement>(null)
   const phoneRef = useRef<HTMLInputElement>(null)
@@ -91,6 +92,33 @@ export default function CheckoutScreen() {
     }).catch(() => {})
   }
 
+  function saveProfile(n: string, p: string) {
+    if (!userId) return
+    fetch(`${API}/profile/update`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: userId, name: n.trim(), phone: p.trim() }),
+    }).catch(() => {})
+  }
+
+  function requestTgContact() {
+    const tg = window.Telegram?.WebApp
+    if (!tg) return
+    const _tg = tg
+    function onContact(data: any) {
+      _tg.offEvent('contactRequested', onContact)
+      if (data?.status !== 'sent') return
+      const contact = data?.responseUnsafe?.contact ?? data?.contact
+      if (contact?.phone_number) {
+        const raw = contact.phone_number.startsWith('+') ? contact.phone_number : `+${contact.phone_number}`
+        handlePhone(raw)
+      }
+      if (contact?.first_name && !name.trim()) setName(contact.first_name)
+    }
+    tg.onEvent('contactRequested', onContact)
+    tg.requestContact()
+  }
+
   async function placeOrder() {
     if (!name.trim()) { focusField(nameRef, 'name'); return }
     const phoneDigits = phone.replace(/\D/g, '')
@@ -121,6 +149,7 @@ export default function CheckoutScreen() {
       })
       if (!resp.ok) throw new Error('server')
       saveAddress(address)
+      saveProfile(name, phone)
       setLastOrderItems(items)
       setOrderNum(orderNum)
       clearCart()
@@ -166,6 +195,12 @@ export default function CheckoutScreen() {
                 style={phoneError || fieldErrors.phone ? { borderColor: 'var(--red)' } : {}}
               />
               {(phoneError || fieldErrors.phone) && <div style={{ fontSize: 11, color: 'var(--red)', marginTop: 4 }}>{phoneError || 'Введите корректный номер'}</div>}
+              {phone === '+7' && (
+                <button type="button" onClick={requestTgContact}
+                  style={{ marginTop: 8, width: '100%', padding: '9px 14px', background: 'var(--card-hover)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  📱 Поделиться номером из Telegram
+                </button>
+              )}
             </div>
             <div className="form-group" style={{ position: 'relative' }}>
               <label className="form-label">Улица <span style={{ color: 'var(--red)' }}>*</span></label>
@@ -219,6 +254,14 @@ export default function CheckoutScreen() {
                 <input className="form-input" placeholder="2" value={entrance} onChange={(e) => setEntrance(e.target.value)} inputMode="numeric" />
               </div>
             </div>
+            {profile?.addresses && profile.addresses.length > 0 && (
+              <div className="form-group">
+                <button type="button" onClick={() => setAddrPopupOpen(true)}
+                  style={{ width: '100%', padding: '9px 14px', background: 'var(--card-hover)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  📍 Ваши адреса
+                </button>
+              </div>
+            )}
             <div className="form-group">
               <label className="form-label">Комментарий</label>
               <textarea className="form-input form-textarea" rows={2} placeholder="Код домофона, этаж, пожелания..." value={comment} onChange={(e) => setComment(e.target.value)} />
@@ -277,6 +320,27 @@ export default function CheckoutScreen() {
           </div>
         </motion.div>
       </div>
+
+      {addrPopupOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
+          onClick={() => setAddrPopupOpen(false)}>
+          <div style={{ width: 'min(360px, calc(100vw - 32px))', background: 'var(--card)', borderRadius: 20, padding: '20px', maxHeight: '70vh', overflowY: 'auto', boxShadow: '0 24px 64px rgba(0,0,0,0.6)' }}
+            onClick={(e) => e.stopPropagation()}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 16 }}>Ваши адреса</div>
+            {(profile?.addresses ?? []).map((addr) => (
+              <div key={addr}
+                onClick={() => { setStreet(addr); setAddrPopupOpen(false) }}
+                style={{ padding: '12px 0', borderBottom: '1px solid var(--border)', fontSize: 14, color: 'var(--text)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ color: 'var(--sub)', fontSize: 16 }}>📍</span> {addr}
+              </div>
+            ))}
+            <button onClick={() => setAddrPopupOpen(false)}
+              style={{ width: '100%', marginTop: 16, padding: 12, background: 'var(--card-hover)', border: 'none', borderRadius: 12, color: '#666', fontSize: 14, cursor: 'pointer' }}>
+              Закрыть
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="checkout-footer">
         <button
