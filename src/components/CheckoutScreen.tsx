@@ -168,8 +168,8 @@ export default function CheckoutScreen() {
     }))
     if (!items.length) { setError('Корзина пуста'); return }
 
-    const orderNum = genOrderNum()
     setLoading(true)
+    const orderNum = await genOrderNum()
     setError('')
 
     try {

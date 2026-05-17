@@ -7,8 +7,11 @@ export function isOpen(): boolean {
   return h >= OPEN_FROM && h < OPEN_TO
 }
 
-export function genOrderNum(): string {
-  const ts = Date.now().toString(36).toUpperCase().slice(-4)
-  const rnd = Math.floor(100 + Math.random() * 900)
-  return `#${ts}${rnd}`
+export async function genOrderNum(): Promise<string> {
+  try {
+    const r = await fetch(`${API}/next-order-num`)
+    const data = await r.json()
+    if (data.num) return data.num
+  } catch { /* ignore */ }
+  return '#' + Math.floor(1000 + Math.random() * 9000)
 }
