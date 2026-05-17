@@ -55,7 +55,7 @@ html, body, #root {
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
 .picker-sub { margin-top: 8px; font-size: 14px; color: var(--sub); }
-.picker-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px 32px; }
+.picker-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px 32px; perspective: 800px; }
 .picker-card {
   border: none; border-radius: 20px; padding: 0;
   cursor: pointer; overflow: hidden;

@@ -12,16 +12,17 @@ export default function App() {
   const screen = useAppStore((s) => s.screen)
 
   return (
-    <div className="app">
+    <div className="app" style={{ perspective: '1200px' }}>
       <AnimatePresence mode="wait">
         {screen === 'picker' && (
           <motion.div
             key="picker"
             className="screen-wrapper"
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -30 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ rotateY: 0, opacity: 1 }}
+            animate={{ rotateY: 0, opacity: 1 }}
+            exit={{ rotateY: -90, opacity: 0 }}
+            transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+            style={{ transformStyle: 'preserve-3d', backfaceVisibility: 'hidden' }}
           >
             <BrandPicker />
           </motion.div>
@@ -30,10 +31,11 @@ export default function App() {
           <motion.div
             key="menu"
             className="screen-wrapper"
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ rotateY: 90, opacity: 0 }}
+            animate={{ rotateY: 0, opacity: 1 }}
             exit={{ opacity: 0, x: 30 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+            style={{ transformStyle: 'preserve-3d', backfaceVisibility: 'hidden' }}
           >
             <MenuScreen />
           </motion.div>
