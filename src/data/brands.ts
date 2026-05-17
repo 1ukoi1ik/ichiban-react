@@ -118,7 +118,7 @@ export const BRANDS: Record<BrandKey, Brand> = {
   },
 }
 
-export const BRAND_KEYS = Object.keys(BRANDS) as BrandKey[]
+export const BRAND_KEYS: BrandKey[] = ['sushi', 'pizza', 'burger', 'shawarma']
 
 export const BRAND_ICONS: Record<BrandKey, string> = {
   sushi: '🍣',
