@@ -21,7 +21,8 @@ export default function CheckoutScreen() {
   const finalTotal = discount ? Math.round(total * (1 - discount / 100)) : total
 
   const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
+  const [phone, setPhone] = useState('+7')
+  const [phoneError, setPhoneError] = useState('')
   const [address, setAddress] = useState('')
   const [addrOpen, setAddrOpen] = useState(false)
   const [dadataSuggestions, setDadataSuggestions] = useState<string[]>([])
@@ -34,11 +35,25 @@ export default function CheckoutScreen() {
   useEffect(() => {
     if (profile) {
       if (profile.name) setName(profile.name)
-      if (profile.phone) setPhone(profile.phone)
+      if (profile.phone) setPhone(profile.phone || '+7')
       const lastAddr = profile.addresses?.[0] ?? profile.address ?? ''
       if (lastAddr) setAddress(lastAddr)
     }
   }, [profile])
+
+  function handlePhone(raw: string) {
+    // не даём удалить +7
+    if (!raw.startsWith('+7')) { setPhone('+7'); return }
+    // оставляем только цифры после +7
+    const digits = raw.slice(2).replace(/\D/g, '').slice(0, 10)
+    let formatted = '+7'
+    if (digits.length > 0) formatted += ' (' + digits.slice(0, 3)
+    if (digits.length >= 3) formatted += ') ' + digits.slice(3, 6)
+    if (digits.length >= 6) formatted += '-' + digits.slice(6, 8)
+    if (digits.length >= 8) formatted += '-' + digits.slice(8, 10)
+    setPhone(formatted)
+    setPhoneError(digits.length > 0 && digits.length < 10 ? 'Введите полный номер' : '')
+  }
 
   const fetchDadata = useCallback((q: string) => {
     if (dadataTimer.current) clearTimeout(dadataTimer.current)
@@ -63,6 +78,8 @@ export default function CheckoutScreen() {
 
   async function placeOrder() {
     if (!name.trim()) { setError('Введите имя'); return }
+    const phoneDigits = phone.replace(/\D/g, '')
+    if (phoneDigits.length < 11) { setError('Введите корректный номер телефона'); return }
     if (!address.trim()) { setError('Введите адрес доставки'); return }
 
     const items = Object.values(cart).map((item) => ({
@@ -118,7 +135,15 @@ export default function CheckoutScreen() {
             </div>
             <div className="form-group">
               <label className="form-label">Номер телефона</label>
-              <input className="form-input" type="tel" placeholder="+7 (000) 000-00-00" value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <input
+                className="form-input"
+                type="tel"
+                inputMode="tel"
+                value={phone}
+                onChange={(e) => handlePhone(e.target.value)}
+                style={phoneError ? { borderColor: 'var(--red)' } : {}}
+              />
+              {phoneError && <div style={{ fontSize: 11, color: 'var(--red)', marginTop: 4 }}>{phoneError}</div>}
             </div>
             <div className="form-group" style={{ position: 'relative' }}>
               <label className="form-label">Адрес доставки</label>
