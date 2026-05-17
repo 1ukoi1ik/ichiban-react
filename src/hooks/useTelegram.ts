@@ -68,12 +68,19 @@ export function useTelegram() {
     } else if (storedUserId) {
       loadProfile(storedUserId)
     } else {
-      // Telegram может заполнить initDataUnsafe чуть позже
-      const t = setTimeout(() => {
-        const uid2 = window.Telegram?.WebApp?.initDataUnsafe?.user?.id
-        if (uid2) loadProfile(uid2)
-      }, 500)
-      return () => clearTimeout(t)
+      // Telegram может заполнить initDataUnsafe чуть позже — пробуем несколько раз
+      const attempts = [300, 800, 1500, 3000]
+      const timers: ReturnType<typeof setTimeout>[] = []
+      let loaded = false
+      attempts.forEach((delay) => {
+        const t = setTimeout(() => {
+          if (loaded) return
+          const uid2 = window.Telegram?.WebApp?.initDataUnsafe?.user?.id
+          if (uid2) { loaded = true; loadProfile(uid2) }
+        }, delay)
+        timers.push(t)
+      })
+      return () => timers.forEach(clearTimeout)
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 }
