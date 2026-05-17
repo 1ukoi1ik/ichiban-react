@@ -89,7 +89,7 @@ html, body, #root {
   position: absolute; inset: 0; padding: 16px 18px 18px;
   display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center;
 }
-.hero-status-row { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; width: 100%; }
+.hero-status-row { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; }
 .restaurant-badge {
   display: inline-flex; align-items: center; gap: 6px;
   background: rgba(8,8,8,0.5); border: 1px solid rgba(52,199,89,0.4);
