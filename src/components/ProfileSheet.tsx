@@ -65,9 +65,20 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
   const [showAvatarPicker, setShowAvatarPicker] = useState(false)
 
   const AVATARS = [
-    { url: 'https://storage.yandexcloud.net/ichiban-photos/male.png', label: 'Парень 1' },
-    { url: 'https://storage.yandexcloud.net/ichiban-photos/female.png', label: 'Девушка 1' },
-    // сюда добавятся новые варианты
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/mal1.png', label: 'Парень 1' },
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/mal2.png', label: 'Парень 2' },
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/mal3.png', label: 'Парень 3' },
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/mal4.png', label: 'Парень 4' },
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/mal5.png', label: 'Парень 5' },
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/mal6.png', label: 'Парень 6' },
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/mal7.png', label: 'Парень 7' },
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/fem1.png', label: 'Девушка 1' },
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/fem2.png', label: 'Девушка 2' },
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/fem3.png', label: 'Девушка 3' },
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/fem4.png', label: 'Девушка 4' },
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/fem5.png', label: 'Девушка 5' },
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/fem6.png', label: 'Девушка 6' },
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/fem7.png', label: 'Девушка 7' },
   ]
 
   const currentAvatar = profile?.avatar
