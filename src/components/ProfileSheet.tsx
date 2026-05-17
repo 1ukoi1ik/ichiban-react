@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '../store/useAppStore'
 import { API } from '../data/api'
@@ -54,7 +55,16 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
   const profile = useAppStore((s) => s.profile)
   const userId = useAppStore((s) => s.userId)
   const setProfile = useAppStore((s) => s.setProfile)
+  const setUserId = useAppStore((s) => s.setUserId)
   const isNew = !profile || profile.new_client
+  const [confirmLogout, setConfirmLogout] = useState(false)
+
+  function logout() {
+    setProfile(null)
+    setUserId(null)
+    setConfirmLogout(false)
+    onClose()
+  }
 
   const gender = profile ? guessGender(profile.name) : 'male'
   const avatar = gender === 'female'
@@ -149,7 +159,29 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
                 🕐 История заказов
               </button>
             )}
-            <button onClick={onClose} style={{ width: '100%', marginTop: 8, padding: 13, background: 'transparent', border: 'none', borderRadius: 12, color: '#666', fontSize: 14, cursor: 'pointer' }}>
+
+            {confirmLogout ? (
+              <div style={{ marginTop: 12, background: 'rgba(232,50,26,0.08)', border: '1px solid rgba(232,50,26,0.3)', borderRadius: 12, padding: '12px 14px' }}>
+                <div style={{ fontSize: 13, color: 'var(--text)', marginBottom: 10, textAlign: 'center' }}>Выйти из профиля?</div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button onClick={() => setConfirmLogout(false)}
+                    style={{ flex: 1, padding: 10, background: 'var(--card-hover)', border: 'none', borderRadius: 10, color: 'var(--text)', fontSize: 13, cursor: 'pointer' }}>
+                    Отмена
+                  </button>
+                  <button onClick={logout}
+                    style={{ flex: 1, padding: 10, background: 'rgba(232,50,26,0.15)', border: '1px solid rgba(232,50,26,0.4)', borderRadius: 10, color: '#E8321A', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                    Выйти
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button onClick={() => setConfirmLogout(true)}
+                style={{ width: '100%', marginTop: 8, padding: 11, background: 'transparent', border: 'none', borderRadius: 12, color: '#666', fontSize: 13, cursor: 'pointer' }}>
+                Выйти из профиля
+              </button>
+            )}
+
+            <button onClick={onClose} style={{ width: '100%', marginTop: 4, padding: 11, background: 'transparent', border: 'none', borderRadius: 12, color: '#555', fontSize: 13, cursor: 'pointer' }}>
               Закрыть
             </button>
           </motion.div>
