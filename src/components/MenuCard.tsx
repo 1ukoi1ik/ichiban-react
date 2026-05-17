@@ -18,9 +18,10 @@ interface Props {
   expandedId: number | null
   onExpand: (id: number | null, el: HTMLDivElement | null) => void
   animDelay?: number
+  compact?: boolean
 }
 
-export default function MenuCard({ item, brandRed, brandOrange, expandedId, onExpand, animDelay = 0 }: Props) {
+export default function MenuCard({ item, brandRed, brandOrange, expandedId, onExpand, animDelay = 0, compact }: Props) {
   const addToCart = useAppStore((s) => s.addToCart)
   const removeFromCart = useAppStore((s) => s.removeFromCart)
   const cart = useAppStore((s) => s.cart)
@@ -38,6 +39,60 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
     if ((e.target as HTMLElement).closest('button')) return
     if (galleryScrolling.current) return
     onExpand(isExpanded ? null : item.id, wrapRef.current)
+  }
+
+  if (compact) {
+    return (
+      <motion.div
+        className="card-drum-wrap"
+        initial={{ opacity: 0, y: 10, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.3, delay: animDelay, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <div className="food-card food-card--compact" onClick={(e) => { if ((e.target as HTMLElement).closest('button')) return; onExpand(null, null) }}>
+          <div className={`card-image-wrap card-image-wrap--compact${imgLoaded ? ' img-loaded' : ''}`}>
+            <div className="shimmer-layer" />
+            <img
+              src={item.img}
+              alt={item.name}
+              className={`card-image${imgLoaded ? ' loaded' : ''}`}
+              loading="lazy"
+              draggable={false}
+              onLoad={() => setImgLoaded(true)}
+            />
+            <div className="card-grad" />
+          </div>
+          <div className="card-body card-body--compact">
+            <div className="card-name card-name--compact">{item.name}</div>
+            <div className="card-compact-footer">
+              <div>
+                <span
+                  className="card-price card-price--compact"
+                  style={{ background: `linear-gradient(135deg, ${brandRed}, ${brandOrange})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
+                >
+                  {item.price} ₽
+                </span>
+                <span className="card-weight">{item.weight}</span>
+              </div>
+              {qty > 0 ? (
+                <div className="qty-ctrl qty-ctrl--compact" onClick={(e) => e.stopPropagation()}>
+                  <button className="qty-btn qty-btn--sm" onClick={() => removeFromCart(item.id)}>−</button>
+                  <span className="qty-num qty-num--sm">{qty}</span>
+                  <button className="qty-btn qty-btn--sm" onClick={() => addToCart(item.id, item.name, item.price, item.img)}>+</button>
+                </div>
+              ) : (
+                <button
+                  className="add-btn add-btn--compact"
+                  onClick={(e) => { e.stopPropagation(); addToCart(item.id, item.name, item.price, item.img) }}
+                >
+                  +
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    )
   }
 
   return (

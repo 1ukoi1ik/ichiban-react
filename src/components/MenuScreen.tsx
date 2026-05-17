@@ -280,6 +280,7 @@ export default function MenuScreen() {
                 expandedId={expandedId}
                 onExpand={handleExpand}
                 animDelay={Math.min(idx * 0.045, 0.18)}
+                compact={gridCols === 2}
               />
             ))}
           </div>
