@@ -49,6 +49,7 @@ export interface Profile {
   total_sum: number
   month_sum: number
   discount: number
+  avatar?: string
 }
 
 export interface Order {

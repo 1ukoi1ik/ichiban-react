@@ -62,11 +62,32 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
   const setProfile = useAppStore((s) => s.setProfile)
   const isNew = !profile || profile.new_client
   const [showCard, setShowCard] = useState(false)
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false)
 
-  const gender = profile ? guessGender(profile.name) : 'male'
-  const avatar = gender === 'female'
-    ? 'https://storage.yandexcloud.net/ichiban-photos/female.png'
-    : 'https://storage.yandexcloud.net/ichiban-photos/male.png'
+  const AVATARS = [
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/male.png', label: 'Парень 1' },
+    { url: 'https://storage.yandexcloud.net/ichiban-photos/female.png', label: 'Девушка 1' },
+    // сюда добавятся новые варианты
+  ]
+
+  const currentAvatar = profile?.avatar
+    ?? (profile ? (guessGender(profile.name) === 'female'
+      ? 'https://storage.yandexcloud.net/ichiban-photos/female.png'
+      : 'https://storage.yandexcloud.net/ichiban-photos/male.png') : '')
+
+  function selectAvatar(url: string) {
+    if (!profile) return
+    setShowAvatarPicker(false)
+    setProfile({ ...profile, avatar: url })
+    const tgUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id ?? null
+    if (tgUserId) {
+      fetch(`${API}/profile/avatar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: tgUserId, avatar: url }),
+      }).catch(() => {})
+    }
+  }
 
   const TIERS = [
     { at: 3000, val: 5 },
@@ -119,8 +140,16 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
               </>
             ) : (
               <>
-                <div className="profile-avatar">
-                  <img src={avatar} alt="" style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover' }} />
+                <div className="profile-avatar" style={{ position: 'relative', display: 'inline-block', cursor: 'pointer' }} onClick={() => setShowAvatarPicker(true)}>
+                  <img src={currentAvatar} alt="" style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
+                  <div style={{
+                    position: 'absolute', bottom: 0, right: 0,
+                    width: 20, height: 20, borderRadius: '50%',
+                    background: `linear-gradient(135deg, ${brandRed}, ${brandOrange})`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 14, fontWeight: 700, color: '#fff', lineHeight: 1,
+                    border: '2px solid var(--bg)',
+                  }}>+</div>
                 </div>
                 <div className="profile-name">{profile!.name}</div>
                 <div className="profile-sub">{profile!.phone || 'Телефон не указан'}</div>
@@ -202,6 +231,48 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
             <button onClick={onClose} style={{ width: '100%', marginTop: 8, padding: 13, background: 'var(--card-hover)', border: '1px solid var(--border)', borderRadius: 12, color: 'var(--text)', fontSize: 14, cursor: 'pointer' }}>
               Закрыть
             </button>
+
+            {/* Пикер аватара */}
+            <AnimatePresence>
+              {showAvatarPicker && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setShowAvatarPicker(false)}
+                  style={{ position: 'fixed', inset: 0, zIndex: 1100, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}
+                >
+                  <motion.div
+                    initial={{ scale: 0.88, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.88, opacity: 0 }}
+                    transition={{ type: 'spring', duration: 0.35, bounce: 0.2 }}
+                    onClick={(e) => e.stopPropagation()}
+                    style={{ background: 'var(--card)', borderRadius: 20, padding: '20px 16px', width: '100%', maxWidth: 320 }}
+                  >
+                    <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)', textAlign: 'center', marginBottom: 16 }}>Выберите аватар</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                      {AVATARS.map((a) => (
+                        <div key={a.url} onClick={() => selectAvatar(a.url)} style={{ cursor: 'pointer', textAlign: 'center' }}>
+                          <img
+                            src={a.url} alt={a.label}
+                            style={{
+                              width: 72, height: 72, borderRadius: '50%', objectFit: 'cover',
+                              border: currentAvatar === a.url ? `3px solid ${brandOrange}` : '3px solid transparent',
+                              transition: 'border 0.15s',
+                            }}
+                          />
+                          <div style={{ fontSize: 11, color: 'var(--sub)', marginTop: 4 }}>{a.label}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <button onClick={() => setShowAvatarPicker(false)} style={{ marginTop: 16, width: '100%', padding: 11, background: 'var(--card-hover)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--sub)', fontSize: 13, cursor: 'pointer' }}>
+                      Отмена
+                    </button>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Карточка предъявления скидки */}
             <AnimatePresence>
