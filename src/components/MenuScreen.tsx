@@ -148,8 +148,8 @@ export default function MenuScreen() {
                 {open ? '● Открыто сейчас' : `● Закрыто · откроем в ${OPEN_FROM}:00`}
               </div>
               {profile && (
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', marginTop: 4 }}>
-                  Рады снова видеть, {profile.name.split(' ')[0]}! 👋
+                <div className="restaurant-badge" style={{ marginTop: 6, color: 'rgba(255,255,255,0.75)', borderColor: 'rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.08)' }}>
+                  👋 Рады снова видеть, {profile.name.split(' ')[0]}!
                 </div>
               )}
             </div>
