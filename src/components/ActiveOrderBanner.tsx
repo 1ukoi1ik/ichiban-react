@@ -81,14 +81,30 @@ export default function ActiveOrderBanner({ brandRed, brandOrange }: Props) {
           style={{ cursor: 'pointer', display: 'flex', alignItems: 'stretch', gap: 0, padding: 0, overflow: 'hidden' }}
         >
           {/* Основная часть */}
-          <div style={{ flex: 1, padding: '12px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <div className="banner-label">Ваш заказ</div>
+          <div style={{ flex: 1, padding: '10px 14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
               <div className="banner-num">{orderNum}</div>
+              <div className="banner-status" style={{ color: brandRed, fontSize: 12, fontWeight: 600 }}>{STEP_LABELS[step]}</div>
             </div>
-            <div style={{ textAlign: 'right' }}>
-              <div className="banner-label">Статус</div>
-              <div className="banner-status" style={{ color: brandRed }}>{STEP_LABELS[step]}</div>
+            {/* Кружки прогресса */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              {Object.keys(STEP_LABELS).map((s) => {
+                const n = Number(s)
+                const done = n < step
+                const active = n === step
+                return (
+                  <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <div style={{
+                      width: 14, height: 14, borderRadius: '50%', flexShrink: 0,
+                      background: done ? '#34C759' : active ? brandRed : 'transparent',
+                      border: done ? '2px solid #34C759' : active ? `2px solid ${brandRed}` : '2px solid #34C759',
+                      animation: active ? 'bannerPulse 1.4s ease-in-out infinite' : 'none',
+                      opacity: done || active ? 1 : 0.4,
+                    }} />
+                    {n < 4 && <div style={{ width: 16, height: 2, background: done ? '#34C759' : 'rgba(255,255,255,0.12)', borderRadius: 1 }} />}
+                  </div>
+                )
+              })}
             </div>
           </div>
 
