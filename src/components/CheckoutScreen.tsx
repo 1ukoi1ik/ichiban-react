@@ -57,17 +57,19 @@ export default function CheckoutScreen() {
     }
   }, [profile])
 
+  function formatPhone(digits: string) {
+    let f = '+7'
+    if (digits.length > 0) f += ' (' + digits.slice(0, 3)
+    if (digits.length >= 3) f += ') ' + digits.slice(3, 6)
+    if (digits.length >= 6) f += '-' + digits.slice(6, 8)
+    if (digits.length >= 8) f += '-' + digits.slice(8, 10)
+    return f
+  }
+
   function handlePhone(raw: string) {
-    // не даём удалить +7
-    if (!raw.startsWith('+7')) { setPhone('+7'); return }
-    // оставляем только цифры после +7
-    const digits = raw.slice(2).replace(/\D/g, '').slice(0, 10)
-    let formatted = '+7'
-    if (digits.length > 0) formatted += ' (' + digits.slice(0, 3)
-    if (digits.length >= 3) formatted += ') ' + digits.slice(3, 6)
-    if (digits.length >= 6) formatted += '-' + digits.slice(6, 8)
-    if (digits.length >= 8) formatted += '-' + digits.slice(8, 10)
-    setPhone(formatted)
+    const digits = raw.replace(/\D/g, '').replace(/^7/, '').slice(0, 10)
+    setPhone(formatPhone(digits))
+    setFieldErrors(p => ({ ...p, phone: false }))
     setPhoneError(digits.length > 0 && digits.length < 10 ? 'Введите полный номер' : '')
   }
 
@@ -191,7 +193,7 @@ export default function CheckoutScreen() {
                 type="tel"
                 inputMode="tel"
                 value={phone}
-                onChange={(e) => { handlePhone(e.target.value); setFieldErrors(p => ({ ...p, phone: false })) }}
+                onChange={(e) => handlePhone(e.target.value)}
                 style={phoneError || fieldErrors.phone ? { borderColor: 'var(--red)' } : {}}
               />
               {(phoneError || fieldErrors.phone) && <div style={{ fontSize: 11, color: 'var(--red)', marginTop: 4 }}>{phoneError || 'Введите корректный номер'}</div>}
