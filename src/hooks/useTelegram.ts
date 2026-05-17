@@ -52,6 +52,7 @@ export function useTelegram() {
                 phone: tgUser.phone_number ?? '',
                 address: '',
                 total_orders: 0,
+                total_sum: 0,
                 month_sum: 0,
                 discount: 0,
               })

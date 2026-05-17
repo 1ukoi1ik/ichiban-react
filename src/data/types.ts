@@ -46,6 +46,7 @@ export interface Profile {
   address?: string
   addresses?: string[]
   total_orders: number
+  total_sum: number
   month_sum: number
   discount: number
 }

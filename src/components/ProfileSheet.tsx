@@ -71,7 +71,7 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
     { at: 7000, val: 10 },
     { at: 15000, val: 15 },
   ]
-  const totalSum = (profile as any)?.total_sum ?? 0
+  const totalSum = profile?.total_sum ?? 0
   const discountNext = profile && !isNew
     ? TIERS.find((t) => totalSum < t.at) ?? null
     : null
