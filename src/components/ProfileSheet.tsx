@@ -170,7 +170,18 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
                 </div>
                 </div>
                 <div className="profile-name">{profile!.name}</div>
-                <div className="profile-sub">{profile!.phone || 'Телефон не указан'}</div>
+                {profile!.phone
+                  ? <div className="profile-sub">{profile!.phone}</div>
+                  : <>
+                      <div className="profile-sub" style={{ marginBottom: 10 }}>Телефон не указан</div>
+                      <button
+                        onClick={() => requestPhone(setProfile)}
+                        style={{ width: '100%', padding: 12, background: `linear-gradient(135deg, ${brandRed}, ${brandOrange})`, border: 'none', borderRadius: 12, color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 4 }}
+                      >
+                        📱 Поделиться номером
+                      </button>
+                    </>
+                }
 
                 <div className="profile-stat">
                   <span>Заказов всего</span>
