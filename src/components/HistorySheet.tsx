@@ -25,11 +25,12 @@ interface HistoryOrder {
 interface Props {
   open: boolean
   onClose: () => void
+  onOpenCart?: () => void
   brandRed: string
   brandOrange: string
 }
 
-export default function HistorySheet({ open, onClose, brandRed, brandOrange }: Props) {
+export default function HistorySheet({ open, onClose, onOpenCart, brandRed, brandOrange }: Props) {
   const userId = useAppStore((s) => s.userId)
   const addToCart = useAppStore((s) => s.addToCart)
   const [orders, setOrders] = useState<HistoryOrder[]>([])
@@ -59,6 +60,7 @@ export default function HistorySheet({ open, onClose, brandRed, brandOrange }: P
       }
     })
     onClose()
+    onOpenCart?.()
   }
 
   return (

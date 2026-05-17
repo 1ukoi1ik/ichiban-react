@@ -289,6 +289,7 @@ export default function MenuScreen() {
       <HistorySheet
         open={historyOpen}
         onClose={() => setHistoryOpen(false)}
+        onOpenCart={() => { setHistoryOpen(false); setCartOpen(true) }}
         brandRed={brand.red}
         brandOrange={brand.orange}
       />
