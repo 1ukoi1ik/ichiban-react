@@ -11,6 +11,7 @@ export default function CheckoutScreen() {
   const userId = useAppStore((s) => s.userId)
   const setScreen = useAppStore((s) => s.setScreen)
   const setOrderNum = useAppStore((s) => s.setOrderNum)
+  const setLastOrderItems = useAppStore((s) => s.setLastOrderItems)
   const clearCart = useAppStore((s) => s.clearCart)
 
   const brand = BRANDS[brandKey]
@@ -70,6 +71,7 @@ export default function CheckoutScreen() {
       })
       if (!resp.ok) throw new Error('server')
       saveAddress(address)
+      setLastOrderItems(items)
       setOrderNum(orderNum)
       clearCart()
       window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred?.('success')

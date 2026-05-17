@@ -9,6 +9,7 @@ interface AppStore {
   cart: Cart
   profile: Profile | null
   orderNum: string | null
+  lastOrderItems: { name: string; qty: number; price: number }[]
   userId: number | null
 
   setScreen: (s: AppStore['screen']) => void
@@ -20,6 +21,7 @@ interface AppStore {
   clearCart: () => void
   setProfile: (p: Profile | null) => void
   setOrderNum: (n: string | null) => void
+  setLastOrderItems: (items: { name: string; qty: number; price: number }[]) => void
   setUserId: (id: number | null) => void
 }
 
@@ -32,6 +34,7 @@ export const useAppStore = create<AppStore>()(
       cart: {},
       profile: null,
       orderNum: null,
+      lastOrderItems: [],
       userId: null,
 
       setScreen: (screen) => set({ screen }),
@@ -71,9 +74,10 @@ export const useAppStore = create<AppStore>()(
       clearCart: () => set({ cart: {} }),
       setProfile: (profile) => set({ profile }),
       setOrderNum: (orderNum) => set({ orderNum }),
+      setLastOrderItems: (lastOrderItems) => set({ lastOrderItems }),
       setUserId: (userId) => set({ userId }),
     }),
-    { name: 'ichi_store', partialize: (s) => ({ cart: s.cart, brandKey: s.brandKey, orderNum: s.orderNum, userId: s.userId }) }
+    { name: 'ichi_store', partialize: (s) => ({ cart: s.cart, brandKey: s.brandKey, orderNum: s.orderNum, lastOrderItems: s.lastOrderItems, userId: s.userId }) }
   )
 )
 

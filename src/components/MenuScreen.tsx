@@ -234,7 +234,7 @@ export default function MenuScreen() {
 
         {/* Баннер активного заказа */}
         <div style={{ padding: '10px 16px 0' }}>
-          <ActiveOrderBanner brandRed={brand.red} />
+          <ActiveOrderBanner brandRed={brand.red} brandOrange={brand.orange} />
         </div>
 
         {/* Карточки */}
