@@ -114,8 +114,10 @@ export default function CheckoutScreen() {
       if (contact?.phone_number) {
         const raw = contact.phone_number.startsWith('+') ? contact.phone_number : `+${contact.phone_number}`
         handlePhone(raw)
+        const n = contact?.first_name && !name.trim() ? contact.first_name : name
+        if (contact?.first_name && !name.trim()) setName(contact.first_name)
+        saveProfile(n, raw)
       }
-      if (contact?.first_name && !name.trim()) setName(contact.first_name)
     }
     tg.onEvent('contactRequested', onContact)
     tg.requestContact()
