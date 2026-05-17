@@ -28,6 +28,12 @@ export function useTelegram() {
   const storedUserId = useAppStore((s) => s.userId)
 
   useEffect(() => {
+    // предзагрузка QR
+    const img = new Image()
+    img.src = 'https://storage.yandexcloud.net/ichiban-photos/qr.webp'
+  }, [])
+
+  useEffect(() => {
     const tg = window.Telegram?.WebApp
     if (tg) {
       tg.ready()
