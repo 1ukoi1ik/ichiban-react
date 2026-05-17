@@ -48,8 +48,15 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
         initial={{ opacity: 0, y: 10, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.3, delay: animDelay, ease: [0.22, 1, 0.36, 1] }}
+        style={{ transformOrigin: 'bottom center', zIndex: isExpanded ? 10 : 1, position: 'relative' }}
       >
-        <div className="food-card food-card--compact" onClick={(e) => { if ((e.target as HTMLElement).closest('button')) return; onExpand(isExpanded ? null : item.id, null) }}>
+        <motion.div
+          className="food-card food-card--compact"
+          animate={{ scale: isExpanded ? 1.3 : 1 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+          style={{ transformOrigin: 'bottom center' }}
+          onClick={(e) => { if ((e.target as HTMLElement).closest('button')) return; onExpand(isExpanded ? null : item.id, null) }}
+        >
           <div className={`card-compact-img${imgLoaded ? ' img-loaded' : ''}`}>
             <div className="shimmer-layer" />
             <img
@@ -87,7 +94,7 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </motion.div>
     )
   }
