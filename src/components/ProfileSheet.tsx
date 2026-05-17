@@ -66,12 +66,21 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
     ? 'https://storage.yandexcloud.net/ichiban-photos/female.png'
     : 'https://storage.yandexcloud.net/ichiban-photos/male.png'
 
+  const TIERS = [
+    { at: 5, val: 5 },
+    { at: 10, val: 10 },
+    { at: 20, val: 15 },
+  ]
   const discountNext = profile && !isNew
-    ? profile.total_orders < 5 ? { need: 5 - profile.total_orders, val: 5 } :
-      profile.total_orders < 10 ? { need: 10 - profile.total_orders, val: 10 } :
-      profile.total_orders < 20 ? { need: 20 - profile.total_orders, val: 15 } :
-      null
+    ? TIERS.find((t) => (profile!.total_orders ?? 0) < t.at) ?? null
     : null
+  const discountPrev = profile && !isNew && discountNext
+    ? TIERS.slice(0, TIERS.indexOf(discountNext)).slice(-1)[0] ?? null
+    : null
+  const progressFrom = discountPrev ? discountPrev.at : 0
+  const progressPct = discountNext
+    ? Math.round(((profile!.total_orders - progressFrom) / (discountNext.at - progressFrom)) * 100)
+    : 100
 
   return (
     <AnimatePresence>
@@ -139,8 +148,29 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
                 )}
 
                 {discountNext && (
-                  <div style={{ marginTop: 12, background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 12, padding: '10px 14px', fontSize: 13, color: 'var(--sub)' }}>
-                    Ещё {discountNext.need} {discountNext.need === 1 ? 'заказ' : 'заказа'} — и скидка {discountNext.val}% 🎁
+                  <div style={{ marginTop: 14, background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 14, padding: '12px 14px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <span style={{ fontSize: 12, color: 'var(--sub)' }}>До скидки {discountNext.val}%</span>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)' }}>
+                        {profile!.total_orders} / {discountNext.at} заказов
+                      </span>
+                    </div>
+                    <div style={{ position: 'relative', height: 8, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${progressPct}%` }}
+                        transition={{ duration: 0.7, ease: 'easeOut' }}
+                        style={{
+                          position: 'absolute', inset: 0,
+                          background: `linear-gradient(90deg, ${brandRed}, ${brandOrange})`,
+                          borderRadius: 99,
+                          boxShadow: `0 0 8px ${brandOrange}66`,
+                        }}
+                      />
+                    </div>
+                    <div style={{ marginTop: 7, fontSize: 12, color: 'var(--sub)', textAlign: 'center' }}>
+                      ещё {discountNext.at - profile!.total_orders} {discountNext.at - profile!.total_orders === 1 ? 'заказ' : 'заказа'} 🎁
+                    </div>
                   </div>
                 )}
               </>
