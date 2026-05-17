@@ -36,10 +36,11 @@ export default function MenuScreen() {
   const setScreen = useAppStore((s) => s.setScreen)
   const cart = useAppStore((s) => s.cart)
   const profile = useAppStore((s) => s.profile)
+  const cartOpen = useAppStore((s) => s.cartOpen)
+  const setCartOpen = useAppStore((s) => s.setCartOpen)
   const count = cartCount(cart)
 
   const brand = BRANDS[brandKey]
-  const [cartOpen, setCartOpen] = useState(false)
   const [catOpen, setCatOpen] = useState(false)
   const [aboutOpen, setAboutOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)

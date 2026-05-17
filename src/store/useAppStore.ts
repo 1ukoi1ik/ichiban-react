@@ -4,6 +4,7 @@ import type { BrandKey, Cart, Profile } from '../data/types'
 
 interface AppStore {
   screen: 'picker' | 'menu' | 'checkout' | 'success'
+  cartOpen: boolean
   brandKey: BrandKey
   currentCat: string
   cart: Cart
@@ -13,6 +14,7 @@ interface AppStore {
   userId: number | null
 
   setScreen: (s: AppStore['screen']) => void
+  setCartOpen: (v: boolean) => void
   setBrandKey: (k: BrandKey) => void
   setCurrentCat: (c: string) => void
   addToCart: (id: number, name: string, price: number, img: string) => void
@@ -29,6 +31,7 @@ export const useAppStore = create<AppStore>()(
   persist(
     (set) => ({
       screen: 'picker',
+      cartOpen: false,
       brandKey: 'sushi',
       currentCat: 'top',
       cart: {},
@@ -38,6 +41,7 @@ export const useAppStore = create<AppStore>()(
       userId: null,
 
       setScreen: (screen) => set({ screen }),
+      setCartOpen: (cartOpen) => set({ cartOpen }),
       setBrandKey: (brandKey) => set({ brandKey, currentCat: 'top', cart: {} }),
       setCurrentCat: (currentCat) => set({ currentCat }),
 
@@ -77,7 +81,7 @@ export const useAppStore = create<AppStore>()(
       setLastOrderItems: (lastOrderItems) => set({ lastOrderItems }),
       setUserId: (userId) => set({ userId }),
     }),
-    { name: 'ichi_store', partialize: (s) => ({ screen: s.screen, cart: s.cart, brandKey: s.brandKey, orderNum: s.orderNum, lastOrderItems: s.lastOrderItems, userId: s.userId }) }
+    { name: 'ichi_store', partialize: (s) => ({ screen: s.screen, cartOpen: s.cartOpen, cart: s.cart, brandKey: s.brandKey, orderNum: s.orderNum, lastOrderItems: s.lastOrderItems, userId: s.userId }) }
   )
 )
 
