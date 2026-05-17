@@ -164,7 +164,7 @@ html, body, #root {
 }
 .food-card--compact:active { opacity: 0.85; transform: scale(0.97); transition: transform 0.1s ease, opacity 0.1s; }
 .card-image-wrap--compact {
-  position: relative; width: 100%; aspect-ratio: 4/3;
+  position: relative; width: 100%; aspect-ratio: 1/1;
   overflow: hidden; background: var(--surface);
   border-radius: 14px 14px 0 0; flex-shrink: 0;
 }
@@ -176,10 +176,11 @@ html, body, #root {
 }
 .card-name--compact {
   font-family: var(--font-display);
-  font-size: clamp(10px, 2.8vw, 13px);
+  font-size: clamp(9px, 2.5vw, 12px);
   font-weight: 700; letter-spacing: -0.2px; line-height: 1.3;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-  overflow: hidden; word-break: break-word;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden; word-break: break-all; overflow-wrap: break-word;
+  hyphens: auto;
 }
 .card-compact-footer {
   display: flex; align-items: center;
@@ -188,10 +189,12 @@ html, body, #root {
 .card-compact-price-block { display: flex; flex-direction: column; min-width: 0; flex: 1; overflow: hidden; }
 .card-price--compact {
   font-family: var(--font-display);
-  font-size: clamp(12px, 3.5vw, 15px);
+  font-size: clamp(11px, 3.2vw, 14px);
   font-weight: 900; display: block; white-space: nowrap;
+  background: linear-gradient(135deg, var(--red), var(--orange));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-.card-compact-footer .card-weight { font-size: clamp(9px, 2.2vw, 11px); }
+.card-compact-footer .card-weight { font-size: clamp(9px, 2.2vw, 11px); white-space: nowrap; }
 
 .qty-ctrl--compact { gap: 3px; flex-shrink: 0; }
 .qty-btn--sm {
