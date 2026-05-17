@@ -30,7 +30,7 @@ function requestPhone(userId: number | null, setProfile: (p: any) => void) {
     const name = [first_name, last_name].filter(Boolean).join(' ')
     setProfile({
       ok: true,
-      new_client: true,
+      new_client: false,
       name: name || '',
       phone: phone_number || '',
       address: '',
@@ -55,13 +55,11 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
   const profile = useAppStore((s) => s.profile)
   const userId = useAppStore((s) => s.userId)
   const setProfile = useAppStore((s) => s.setProfile)
-  const setUserId = useAppStore((s) => s.setUserId)
   const isNew = !profile || profile.new_client
   const [confirmLogout, setConfirmLogout] = useState(false)
 
   function logout() {
     setProfile(null)
-    setUserId(null)
     setConfirmLogout(false)
     onClose()
   }
