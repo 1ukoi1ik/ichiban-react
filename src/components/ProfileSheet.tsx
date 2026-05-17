@@ -16,10 +16,11 @@ function guessGender(name: string) {
   return ['а', 'я', 'ь'].includes(last) ? 'female' : 'male'
 }
 
-function requestPhone(userId: number | null, setProfile: (p: any) => void) {
+function requestPhone(setProfile: (p: any) => void) {
   const tg = window.Telegram?.WebApp
   if (!tg) return
   const _tg = tg
+  const tgUserId = _tg.initDataUnsafe?.user?.id ?? null
 
   function onContact(data: any) {
     _tg.offEvent('contactRequested', onContact)
@@ -38,11 +39,11 @@ function requestPhone(userId: number | null, setProfile: (p: any) => void) {
       month_sum: 0,
       discount: 0,
     })
-    if (userId && phone_number) {
+    if (tgUserId && phone_number) {
       fetch(`${API}/profile/phone`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userId, phone: phone_number, name }),
+        body: JSON.stringify({ user_id: tgUserId, phone: phone_number, name }),
       }).catch(() => {})
     }
   }
@@ -53,13 +54,14 @@ function requestPhone(userId: number | null, setProfile: (p: any) => void) {
 
 export default function ProfileSheet({ open, onClose, onHistory, brandRed, brandOrange }: Props) {
   const profile = useAppStore((s) => s.profile)
-  const userId = useAppStore((s) => s.userId)
   const setProfile = useAppStore((s) => s.setProfile)
+  const setUserId = useAppStore((s) => s.setUserId)
   const isNew = !profile || profile.new_client
   const [confirmLogout, setConfirmLogout] = useState(false)
 
   function logout() {
     setProfile(null)
+    setUserId(null)
     setConfirmLogout(false)
     onClose()
   }
@@ -101,7 +103,7 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
                   Поделитесь номером телефона — мы подтянем ваши заказы и персональную скидку
                 </div>
                 <button
-                  onClick={() => requestPhone(userId, setProfile)}
+                  onClick={() => requestPhone(setProfile)}
                   style={{
                     width: '100%', padding: 14,
                     background: `linear-gradient(135deg, ${brandRed}, ${brandOrange})`,
