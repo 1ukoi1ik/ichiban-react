@@ -71,10 +71,11 @@ export default function ProfileSheet({ open, onClose, brandRed, brandOrange }: P
           />
           <motion.div
             className="profile-sheet"
-            initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
-            transition={{ type: 'spring', duration: 0.45, bounce: 0.1 }}
+            initial={{ scale: 0.88, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.88, opacity: 0 }}
+            transition={{ type: 'spring', duration: 0.35, bounce: 0.25 }}
           >
-            <div style={{ width: 40, height: 4, background: 'var(--border)', borderRadius: 2, margin: '0 auto 20px' }} />
 
             {isNew ? (
               <>
