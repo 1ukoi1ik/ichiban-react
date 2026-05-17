@@ -67,15 +67,16 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
     : 'https://storage.yandexcloud.net/ichiban-photos/male.png'
 
   const TIERS = [
-    { at: 5, val: 5 },
-    { at: 10, val: 10 },
-    { at: 20, val: 15 },
+    { at: 3000, val: 5 },
+    { at: 7000, val: 10 },
+    { at: 15000, val: 15 },
   ]
+  const totalSum = (profile as any)?.total_sum ?? 0
   const discountNext = profile && !isNew
-    ? TIERS.find((t) => (profile!.total_orders ?? 0) < t.at) ?? null
+    ? TIERS.find((t) => totalSum < t.at) ?? null
     : null
   const progressPct = discountNext
-    ? Math.round(((profile!.total_orders) / discountNext.at) * 100)
+    ? Math.min(Math.round((totalSum / discountNext.at) * 100), 100)
     : 100
 
   return (
@@ -148,7 +149,7 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                       <span style={{ fontSize: 12, color: 'var(--sub)' }}>До скидки {discountNext.val}%</span>
                       <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)' }}>
-                        {profile!.total_orders} / {discountNext.at} заказов
+                        {totalSum.toLocaleString('ru')} / {discountNext.at.toLocaleString('ru')} ₽
                       </span>
                     </div>
                     <div style={{ position: 'relative', height: 8, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
@@ -166,7 +167,7 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
                       />
                     </div>
                     <div style={{ marginTop: 7, fontSize: 12, color: 'var(--sub)', textAlign: 'center' }}>
-                      ещё {discountNext.at - profile!.total_orders} {discountNext.at - profile!.total_orders === 1 ? 'заказ' : 'заказа'} 🎁
+                      ещё {(discountNext.at - totalSum).toLocaleString('ru')} ₽ — и скидка {discountNext.val}% 🎁
                     </div>
                   </div>
                 )}
