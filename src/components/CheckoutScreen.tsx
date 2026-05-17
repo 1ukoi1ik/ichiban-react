@@ -197,12 +197,10 @@ export default function CheckoutScreen() {
                 style={phoneError || fieldErrors.phone ? { borderColor: 'var(--red)' } : {}}
               />
               {(phoneError || fieldErrors.phone) && <div style={{ fontSize: 11, color: 'var(--red)', marginTop: 4 }}>{phoneError || 'Введите корректный номер'}</div>}
-              {phone === '+7' && (
-                <button type="button" onClick={requestTgContact}
-                  style={{ marginTop: 8, width: '100%', padding: '9px 14px', background: 'var(--card-hover)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-                  📱 Поделиться номером из Telegram
-                </button>
-              )}
+              <button type="button" onClick={requestTgContact}
+                style={{ marginTop: 8, width: '100%', padding: '9px 14px', background: 'var(--card-hover)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                📱 Поделиться номером из Telegram
+              </button>
             </div>
             <div className="form-group" style={{ position: 'relative' }}>
               <label className="form-label">Улица <span style={{ color: 'var(--red)' }}>*</span></label>
