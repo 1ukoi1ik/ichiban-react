@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useAppStore, cartTotal } from '../store/useAppStore'
 import { BRANDS } from '../data/brands'
 import { API, genOrderNum } from '../data/api'
+
+const DADATA_KEY = import.meta.env.VITE_DADATA_KEY as string
 
 export default function CheckoutScreen() {
   const brandKey = useAppStore((s) => s.brandKey)
@@ -23,6 +25,8 @@ export default function CheckoutScreen() {
   const [phone, setPhone] = useState('')
   const [address, setAddress] = useState('')
   const [addrOpen, setAddrOpen] = useState(false)
+  const [dadataSuggestions, setDadataSuggestions] = useState<string[]>([])
+  const dadataTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [comment, setComment] = useState('')
   const [payment, setPayment] = useState('Наличными курьеру')
   const [loading, setLoading] = useState(false)
@@ -36,6 +40,22 @@ export default function CheckoutScreen() {
       if (lastAddr) setAddress(lastAddr)
     }
   }, [profile])
+
+  const fetchDadata = useCallback((q: string) => {
+    if (dadataTimer.current) clearTimeout(dadataTimer.current)
+    if (q.length < 3) { setDadataSuggestions([]); return }
+    dadataTimer.current = setTimeout(async () => {
+      try {
+        const r = await fetch('https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Token ${DADATA_KEY}` },
+          body: JSON.stringify({ query: q, count: 5, locations: [{ city: 'Луганск' }] }),
+        })
+        const data = await r.json()
+        setDadataSuggestions((data.suggestions ?? []).map((s: any) => s.value as string))
+      } catch { /* ignore */ }
+    }, 300)
+  }, [])
 
   function saveAddress(addr: string) {
     if (!userId || !addr.trim()) return
@@ -111,32 +131,42 @@ export default function CheckoutScreen() {
                 className="form-input"
                 placeholder="Улица, дом, квартира"
                 value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                onChange={(e) => { setAddress(e.target.value); fetchDadata(e.target.value) }}
                 onFocus={() => setAddrOpen(true)}
-                onBlur={() => setTimeout(() => setAddrOpen(false), 150)}
+                onBlur={() => setTimeout(() => setAddrOpen(false), 200)}
               />
-              {addrOpen && profile?.addresses && profile.addresses.length > 0 && (
-                <div style={{
-                  position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100,
-                  background: 'var(--card)', border: '1px solid var(--border)',
-                  borderRadius: 10, marginTop: 4, overflow: 'hidden',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
-                }}>
-                  {profile.addresses.map((addr) => (
-                    <div
-                      key={addr}
-                      onMouseDown={() => { setAddress(addr); setAddrOpen(false) }}
-                      style={{
-                        padding: '10px 14px', fontSize: 13, color: 'var(--text)',
-                        cursor: 'pointer', borderBottom: '1px solid var(--border)',
-                        display: 'flex', alignItems: 'center', gap: 8,
-                      }}
-                    >
-                      <span style={{ color: 'var(--sub)' }}>📍</span> {addr}
-                    </div>
-                  ))}
-                </div>
-              )}
+              {addrOpen && (() => {
+                const saved = profile?.addresses ?? []
+                const suggestions = dadataSuggestions.filter(s => !saved.includes(s))
+                const all = [...saved, ...suggestions]
+                return all.length > 0 ? (
+                  <div style={{
+                    position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100,
+                    background: 'var(--card)', border: '1px solid var(--border)',
+                    borderRadius: 10, marginTop: 4, overflow: 'hidden',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+                  }}>
+                    {saved.map((addr) => (
+                      <div
+                        key={addr}
+                        onMouseDown={() => { setAddress(addr); setAddrOpen(false); setDadataSuggestions([]) }}
+                        style={{ padding: '10px 14px', fontSize: 13, color: 'var(--text)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}
+                      >
+                        <span style={{ color: 'var(--sub)' }}>🕐</span> {addr}
+                      </div>
+                    ))}
+                    {suggestions.map((addr) => (
+                      <div
+                        key={addr}
+                        onMouseDown={() => { setAddress(addr); setAddrOpen(false); setDadataSuggestions([]) }}
+                        style={{ padding: '10px 14px', fontSize: 13, color: 'var(--text)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}
+                      >
+                        <span style={{ color: 'var(--sub)' }}>📍</span> {addr}
+                      </div>
+                    ))}
+                  </div>
+                ) : null
+              })()}
             </div>
             <div className="form-group">
               <label className="form-label">Комментарий</label>
