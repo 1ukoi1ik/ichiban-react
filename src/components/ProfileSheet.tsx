@@ -156,6 +156,7 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
               </>
             ) : (
               <>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <div className="profile-avatar" style={{ position: 'relative', display: 'inline-block', cursor: 'pointer' }} onClick={() => setShowAvatarPicker(true)}>
                   <img src={currentAvatar} alt="" style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
                   <div style={{
@@ -166,6 +167,7 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
                     fontSize: 14, fontWeight: 700, color: '#fff', lineHeight: 1,
                     border: '2px solid var(--bg)',
                   }}>+</div>
+                </div>
                 </div>
                 <div className="profile-name">{profile!.name}</div>
                 <div className="profile-sub">{profile!.phone || 'Телефон не указан'}</div>
