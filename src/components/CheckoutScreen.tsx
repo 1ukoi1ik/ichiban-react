@@ -117,8 +117,8 @@ export default function CheckoutScreen() {
   function deleteAddress(addr: string) {
     const uid = userId ?? window.Telegram?.WebApp?.initDataUnsafe?.user?.id ?? null
     if (!uid) return
-    fetch(`${API}/profile/address`, {
-      method: 'DELETE',
+    fetch(`${API}/profile/address/delete`, {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: uid, address: addr }),
     }).catch(() => {})
