@@ -257,22 +257,17 @@ export default function MenuScreen() {
       </div>
 
       {/* FAB */}
-      <AnimatePresence>
-        {count > 0 && (
-          <motion.button
-            className="cart-fab has-items"
-            onClick={() => setCartOpen(true)}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: 'spring', duration: 0.4, bounce: 0.4 }}
-            style={{ background: `linear-gradient(135deg, ${brand.red}, ${brand.orange})` }}
-          >
-            🛒
-            <span className="fab-badge">{count}</span>
-          </motion.button>
-        )}
-      </AnimatePresence>
+      <motion.button
+        className={`cart-fab${count > 0 ? ' has-items' : ''}`}
+        onClick={() => setCartOpen(true)}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: 'spring', duration: 0.4, bounce: 0.4 }}
+        style={{ background: `linear-gradient(135deg, ${brand.red}, ${brand.orange})` }}
+      >
+        🛒
+        {count > 0 && <span className="fab-badge">{count}</span>}
+      </motion.button>
 
       <CartSheet
         open={cartOpen}
