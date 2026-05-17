@@ -29,12 +29,14 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
   const wrapRef = useRef<HTMLDivElement>(null)
   const [imgIdx, setImgIdx] = useState(0)
   const [imgLoaded, setImgLoaded] = useState(false)
+  const galleryScrolling = useRef(false)
 
   const images = item.imgs?.length ? item.imgs : [item.img]
   const hasGallery = images.length > 1
 
   function handleClick(e: React.MouseEvent) {
     if ((e.target as HTMLElement).closest('button')) return
+    if (galleryScrolling.current) return
     onExpand(isExpanded ? null : item.id, wrapRef.current)
   }
 
@@ -58,11 +60,12 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
             <div
               className="card-gallery"
               onScroll={(e) => {
+                galleryScrolling.current = true
                 const el = e.currentTarget
                 const idx = Math.round(el.scrollLeft / el.offsetWidth)
                 setImgIdx(idx)
+                setTimeout(() => { galleryScrolling.current = false }, 200)
               }}
-              onClick={(e) => e.stopPropagation()}
             >
               {images.map((src, i) => (
                 <div key={i} className="card-gallery-slide">
