@@ -233,8 +233,8 @@ export default function MenuScreen() {
           >
             <motion.svg
               width="18" height="18" viewBox="0 0 18 18" fill="none"
-              animate={{ rotate: gridCols === 2 ? 90 : 0, opacity: 1 }}
-              transition={{ duration: 0.25, ease: [0.34, 1.56, 0.64, 1] }}
+              animate={{ rotate: gridCols === 2 ? 0 : 90 }}
+              transition={{ duration: 0.3, ease: [0.34, 1.56, 0.64, 1] }}
             >
               {gridCols === 1 ? (
                 // 2×2 сетка
