@@ -49,7 +49,7 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.3, delay: animDelay, ease: [0.22, 1, 0.36, 1] }}
       >
-        <div className="food-card food-card--compact" onClick={(e) => { if ((e.target as HTMLElement).closest('button')) return }}>
+        <div className="food-card food-card--compact" onClick={(e) => { if ((e.target as HTMLElement).closest('button')) return; onExpand(isExpanded ? null : item.id, null) }}>
           <div className={`card-compact-img${imgLoaded ? ' img-loaded' : ''}`}>
             <div className="shimmer-layer" />
             <img
@@ -60,9 +60,12 @@ export default function MenuCard({ item, brandRed, brandOrange, expandedId, onEx
               draggable={false}
               onLoad={() => setImgLoaded(true)}
             />
-            <div className="card-compact-overlay" />
+            <div className={`card-compact-overlay${isExpanded ? ' expanded' : ''}`} />
             <div className="card-compact-info">
               <div className="card-compact-name">{item.name}</div>
+              {isExpanded && (
+                <div className="card-compact-desc">{item.desc}</div>
+              )}
               <div className="card-compact-bottom">
                 <span className="card-compact-price" style={{ background: `linear-gradient(135deg, ${brandRed}, ${brandOrange})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                   {item.price} ₽

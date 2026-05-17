@@ -195,7 +195,10 @@ html, body, #root {
 .card-compact-overlay {
   position: absolute; inset: 0;
   background: linear-gradient(to bottom, transparent 35%, rgba(8,8,8,0.55) 60%, rgba(8,8,8,0.92) 100%);
-  z-index: 2;
+  z-index: 2; transition: background 0.3s;
+}
+.card-compact-overlay.expanded {
+  background: linear-gradient(to bottom, rgba(8,8,8,0.3) 0%, rgba(8,8,8,0.88) 50%, rgba(8,8,8,0.97) 100%);
 }
 
 /* Текст поверх картинки */
@@ -203,6 +206,11 @@ html, body, #root {
   position: absolute; bottom: 0; left: 0; right: 0;
   z-index: 3; padding: 8px 9px 9px;
   display: flex; flex-direction: column; gap: 5px;
+}
+.card-compact-desc {
+  font-size: clamp(9px, 2.5vw, 11px); color: rgba(255,255,255,0.75);
+  line-height: 1.4; margin-bottom: 2px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
 .card-compact-name {
   font-family: var(--font-display);
