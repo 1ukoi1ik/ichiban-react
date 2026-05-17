@@ -8,5 +8,7 @@ export function isOpen(): boolean {
 }
 
 export function genOrderNum(): string {
-  return '#' + Math.floor(1000 + Math.random() * 9000)
+  const ts = Date.now().toString(36).toUpperCase().slice(-4)
+  const rnd = Math.floor(100 + Math.random() * 900)
+  return `#${ts}${rnd}`
 }
