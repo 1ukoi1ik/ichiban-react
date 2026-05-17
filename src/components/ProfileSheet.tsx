@@ -165,7 +165,7 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
                 <div style={{ fontSize: 13, color: 'var(--text)', marginBottom: 10, textAlign: 'center' }}>Выйти из профиля?</div>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <button onClick={() => setConfirmLogout(false)}
-                    style={{ flex: 1, padding: 10, background: 'var(--card-hover)', border: 'none', borderRadius: 10, color: 'var(--text)', fontSize: 13, cursor: 'pointer' }}>
+                    style={{ flex: 1, padding: 10, background: 'var(--card-hover)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text)', fontSize: 13, cursor: 'pointer' }}>
                     Отмена
                   </button>
                   <button onClick={logout}
@@ -176,12 +176,12 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
               </div>
             ) : (
               <button onClick={() => setConfirmLogout(true)}
-                style={{ width: '100%', marginTop: 8, padding: 11, background: 'transparent', border: 'none', borderRadius: 12, color: '#666', fontSize: 13, cursor: 'pointer' }}>
-                Выйти из профиля
+                style={{ width: '100%', marginTop: 8, padding: 13, background: 'var(--card-hover)', border: '1px solid var(--border)', borderRadius: 12, color: 'var(--text)', fontSize: 14, cursor: 'pointer' }}>
+                🚪 Выйти из профиля
               </button>
             )}
 
-            <button onClick={onClose} style={{ width: '100%', marginTop: 4, padding: 11, background: 'transparent', border: 'none', borderRadius: 12, color: '#555', fontSize: 13, cursor: 'pointer' }}>
+            <button onClick={onClose} style={{ width: '100%', marginTop: 8, padding: 13, background: 'var(--card-hover)', border: '1px solid var(--border)', borderRadius: 12, color: 'var(--text)', fontSize: 14, cursor: 'pointer' }}>
               Закрыть
             </button>
           </motion.div>
