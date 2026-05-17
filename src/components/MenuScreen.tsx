@@ -43,6 +43,7 @@ export default function MenuScreen() {
   const brand = BRANDS[brandKey]
   const [catOpen, setCatOpen] = useState(false)
   const [aboutOpen, setAboutOpen] = useState(false)
+  const [gridCols, setGridCols] = useState<1 | 2>(1)
   const [profileOpen, setProfileOpen] = useState(false)
   const [historyOpen, setHistoryOpen] = useState(false)
   const [expandedId, setExpandedId] = useState<number | null>(null)
@@ -224,6 +225,15 @@ export default function MenuScreen() {
 
           {/* О нас */}
           <div
+            className="cat-trigger"
+            style={{ flex: '0 0 auto', padding: '9px 12px' }}
+            onClick={(e) => { e.stopPropagation(); setGridCols(gridCols === 1 ? 2 : 1) }}
+            title={gridCols === 1 ? 'Сетка 2×' : 'Список'}
+          >
+            {gridCols === 1 ? '⊞' : '☰'}
+          </div>
+
+          <div
             className={`cat-trigger about-trigger${aboutOpen ? ' open' : ''}`}
             style={{ marginLeft: 'auto' }}
             onClick={(e) => { e.stopPropagation(); setAboutOpen(!aboutOpen); setCatOpen(false) }}
@@ -260,7 +270,7 @@ export default function MenuScreen() {
 
         {/* Карточки */}
         <div style={{ padding: '12px 16px 0' }}>
-          <div className="cards-grid">
+          <div className={`cards-grid${gridCols === 2 ? ' cards-grid--2col' : ''}`}>
             {filteredItems.map((item, idx) => (
               <MenuCard
                 key={item.id}
