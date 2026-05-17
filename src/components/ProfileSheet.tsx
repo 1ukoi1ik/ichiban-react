@@ -69,7 +69,7 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
     if (open && autoCard && profile && !profile.new_client && profile.discount > 0) {
       setShowCard(true)
     }
-  }, [open, autoCard])
+  }, [open, autoCard, profile?.discount])
 
   const AVATARS = [
     { url: 'https://storage.yandexcloud.net/ichiban-photos/mal1.png', label: 'Парень 1' },
