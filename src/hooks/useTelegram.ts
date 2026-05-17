@@ -9,6 +9,11 @@ declare global {
         ready(): void
         expand(): void
         initDataUnsafe?: { user?: { id?: number } }
+        HapticFeedback?: {
+          notificationOccurred(type: 'error' | 'success' | 'warning'): void
+          selectionChanged?(): void
+          impactOccurred?(style: 'light' | 'medium' | 'heavy'): void
+        }
       }
     }
   }

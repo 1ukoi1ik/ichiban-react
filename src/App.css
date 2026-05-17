@@ -390,9 +390,19 @@ html, body, #root {
 .form-input:focus { border-color: rgba(232,50,26,0.5); }
 .form-input::placeholder { color: var(--sub2); }
 .form-textarea { resize: none; }
-.radio-group { display: flex; flex-direction: column; gap: 10px; }
-.radio-row { display: flex; align-items: center; gap: 10px; font-size: 15px; cursor: pointer; }
-.radio-row input { accent-color: var(--red); }
+.pay-options { display: flex; gap: 8px; flex-wrap: wrap; }
+.pay-opt {
+  display: flex; align-items: center; gap: 8px;
+  padding: 11px 16px; border-radius: 14px;
+  border: 1.5px solid var(--border-light); background: var(--card);
+  color: var(--sub); font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: border-color 0.18s, background 0.18s, color 0.18s;
+  flex: 1; min-width: 120px;
+}
+.pay-opt.active {
+  border-color: var(--red); background: rgba(232,50,26,0.08); color: var(--text);
+}
+.pay-icon { font-size: 18px; }
 .order-summary { background: var(--card); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
 .order-summary-item { display: flex; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--sub); }
 .order-summary-item:last-child { border-bottom: none; }

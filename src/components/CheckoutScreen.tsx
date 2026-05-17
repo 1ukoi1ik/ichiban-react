@@ -60,6 +60,7 @@ export default function CheckoutScreen() {
       if (!resp.ok) throw new Error('server')
       setOrderNum(orderNum)
       clearCart()
+      window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred?.('success')
       setScreen('success')
     } catch {
       setError('Ошибка отправки. Попробуйте ещё раз.')
@@ -100,13 +101,24 @@ export default function CheckoutScreen() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Оплата</label>
-              <div className="radio-group">
-                {['Наличными курьеру', 'Картой курьеру', 'Картой онлайн'].map((p) => (
-                  <label key={p} className="radio-row">
-                    <input type="radio" name="payment" checked={payment === p} onChange={() => setPayment(p)} />
-                    {p}
-                  </label>
+              <label className="form-label">Способ оплаты</label>
+              <div className="pay-options">
+                {[
+                  { key: 'Картой курьеру', icon: '💳', label: 'Картой курьеру' },
+                  { key: 'Наличными курьеру', icon: '💵', label: 'Наличными' },
+                  { key: 'Telegram Pay', icon: '✈️', label: 'Telegram Pay' },
+                ].map(({ key, icon, label }) => (
+                  <div
+                    key={key}
+                    className={`pay-opt${payment === key ? ' active' : ''}`}
+                    onClick={() => {
+                      setPayment(key)
+                      window.Telegram?.WebApp?.HapticFeedback?.selectionChanged?.()
+                    }}
+                  >
+                    <span className="pay-icon">{icon}</span>
+                    {label}
+                  </div>
                 ))}
               </div>
             </div>
