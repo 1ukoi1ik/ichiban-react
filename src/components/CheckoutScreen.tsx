@@ -106,20 +106,23 @@ export default function CheckoutScreen() {
   }
 
   function saveProfile(n: string, p: string) {
-    if (!userId) return
+    const uid = userId ?? window.Telegram?.WebApp?.initDataUnsafe?.user?.id ?? null
+    if (!uid) return
+    const phone = p.trim().startsWith('+') ? p.trim() : p.trim() ? `+${p.trim()}` : ''
     fetch(`${API}/profile/update`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: userId, name: n.trim(), phone: p.trim() }),
+      body: JSON.stringify({ user_id: uid, name: n.trim(), phone }),
     }).catch(() => {})
   }
 
   function saveProfileNameOnly(n: string) {
-    if (!userId) return
+    const uid = userId ?? window.Telegram?.WebApp?.initDataUnsafe?.user?.id ?? null
+    if (!uid) return
     fetch(`${API}/profile/update-name`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: userId, name: n.trim(), phone: '' }),
+      body: JSON.stringify({ user_id: uid, name: n.trim(), phone: '' }),
     }).catch(() => {})
   }
 

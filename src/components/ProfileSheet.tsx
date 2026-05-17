@@ -27,13 +27,14 @@ function requestPhone(setProfile: (p: any) => void) {
     if (data?.status !== 'sent') return
     const contact = data?.responseUnsafe?.contact ?? data?.contact
     if (!contact) return
-    const { phone_number, first_name, last_name } = contact
+    const { phone_number: raw_phone, first_name, last_name } = contact
+    const phone_number = raw_phone ? (raw_phone.startsWith('+') ? raw_phone : `+${raw_phone}`) : ''
     const name = [first_name, last_name].filter(Boolean).join(' ')
     setProfile({
       ok: true,
       new_client: false,
       name: name || '',
-      phone: phone_number || '',
+      phone: phone_number,
       address: '',
       total_orders: 0,
       month_sum: 0,
