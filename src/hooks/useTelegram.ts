@@ -25,12 +25,19 @@ declare global {
 export function useTelegram() {
   const setUserId = useAppStore((s) => s.setUserId)
   const setProfile = useAppStore((s) => s.setProfile)
+  const setScreen = useAppStore((s) => s.setScreen)
   const storedUserId = useAppStore((s) => s.userId)
 
   useEffect(() => {
     // предзагрузка QR
     const img = new Image()
     img.src = 'https://storage.yandexcloud.net/ichiban-photos/qr.webp'
+  }, [])
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('reset') === '1') {
+      setScreen('picker')
+    }
   }, [])
 
   useEffect(() => {
