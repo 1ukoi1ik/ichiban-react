@@ -34,6 +34,18 @@ export default function CheckoutScreen() {
   const [payment, setPayment] = useState('Наличными курьеру')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({})
+
+  const nameRef = useRef<HTMLInputElement>(null)
+  const phoneRef = useRef<HTMLInputElement>(null)
+  const streetRef = useRef<HTMLInputElement>(null)
+  const houseRef = useRef<HTMLInputElement>(null)
+
+  function focusField(ref: React.RefObject<HTMLInputElement | null>, field: string) {
+    setFieldErrors((prev) => ({ ...prev, [field]: true }))
+    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    setTimeout(() => ref.current?.focus(), 300)
+  }
 
   useEffect(() => {
     if (profile) {
@@ -80,11 +92,12 @@ export default function CheckoutScreen() {
   }
 
   async function placeOrder() {
-    if (!name.trim()) { setError('Введите имя'); return }
+    if (!name.trim()) { focusField(nameRef, 'name'); return }
     const phoneDigits = phone.replace(/\D/g, '')
-    if (phoneDigits.length < 11) { setError('Введите корректный номер телефона'); return }
-    if (!street.trim()) { setError('Введите улицу'); return }
-    if (!house.trim()) { setError('Введите номер дома'); return }
+    if (phoneDigits.length < 11) { focusField(phoneRef, 'phone'); return }
+    if (!street.trim()) { focusField(streetRef, 'street'); return }
+    if (!house.trim()) { focusField(houseRef, 'house'); return }
+    setFieldErrors({})
     const address = [street.trim(), `д ${house.trim()}`, flat.trim() ? `кв ${flat.trim()}` : '', entrance.trim() ? `подъезд ${entrance.trim()}` : ''].filter(Boolean).join(', ')
 
     const items = Object.values(cart).map((item) => ({
@@ -136,30 +149,37 @@ export default function CheckoutScreen() {
           <div className="form-section">
             <div className="form-group">
               <label className="form-label">Ваше имя</label>
-              <input className="form-input" placeholder="Иван Иванов" value={name} onChange={(e) => setName(e.target.value)} />
+              <input ref={nameRef} className="form-input" placeholder="Иван Иванов" value={name}
+                onChange={(e) => { setName(e.target.value); setFieldErrors(p => ({ ...p, name: false })) }}
+                style={fieldErrors.name ? { borderColor: 'var(--red)' } : {}} />
+              {fieldErrors.name && <div style={{ fontSize: 11, color: 'var(--red)', marginTop: 4 }}>Введите имя</div>}
             </div>
             <div className="form-group">
               <label className="form-label">Номер телефона</label>
               <input
+                ref={phoneRef}
                 className="form-input"
                 type="tel"
                 inputMode="tel"
                 value={phone}
-                onChange={(e) => handlePhone(e.target.value)}
-                style={phoneError ? { borderColor: 'var(--red)' } : {}}
+                onChange={(e) => { handlePhone(e.target.value); setFieldErrors(p => ({ ...p, phone: false })) }}
+                style={phoneError || fieldErrors.phone ? { borderColor: 'var(--red)' } : {}}
               />
-              {phoneError && <div style={{ fontSize: 11, color: 'var(--red)', marginTop: 4 }}>{phoneError}</div>}
+              {(phoneError || fieldErrors.phone) && <div style={{ fontSize: 11, color: 'var(--red)', marginTop: 4 }}>{phoneError || 'Введите корректный номер'}</div>}
             </div>
             <div className="form-group" style={{ position: 'relative' }}>
               <label className="form-label">Улица <span style={{ color: 'var(--red)' }}>*</span></label>
               <input
+                ref={streetRef}
                 className="form-input"
                 placeholder="ул Советская"
                 value={street}
-                onChange={(e) => { setStreet(e.target.value); fetchDadata(e.target.value) }}
+                onChange={(e) => { setStreet(e.target.value); fetchDadata(e.target.value); setFieldErrors(p => ({ ...p, street: false })) }}
                 onFocus={() => setStreetOpen(true)}
                 onBlur={() => setTimeout(() => setStreetOpen(false), 200)}
+                style={fieldErrors.street ? { borderColor: 'var(--red)' } : {}}
               />
+              {fieldErrors.street && <div style={{ fontSize: 11, color: 'var(--red)', marginTop: 4 }}>Введите улицу</div>}
               {streetOpen && (() => {
                 const saved = profile?.addresses ?? []
                 const suggestions = dadataSuggestions.filter(s => !saved.includes(s))
@@ -185,7 +205,10 @@ export default function CheckoutScreen() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
               <div className="form-group">
                 <label className="form-label">Дом <span style={{ color: 'var(--red)' }}>*</span></label>
-                <input className="form-input" placeholder="5" value={house} onChange={(e) => setHouse(e.target.value)} />
+                <input ref={houseRef} className="form-input" placeholder="5" value={house}
+                  onChange={(e) => { setHouse(e.target.value); setFieldErrors(p => ({ ...p, house: false })) }}
+                  style={fieldErrors.house ? { borderColor: 'var(--red)' } : {}} />
+                {fieldErrors.house && <div style={{ fontSize: 11, color: 'var(--red)', marginTop: 4 }}>Введите дом</div>}
               </div>
               <div className="form-group">
                 <label className="form-label">Квартира</label>
