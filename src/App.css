@@ -113,14 +113,14 @@ html, body, #root {
   position: sticky; top: 0; z-index: 100;
   background: rgba(8,8,8,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
-  padding: 10px 16px; display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; display: flex; align-items: center; gap: 8px;
 }
 .cat-trigger {
-  display: flex; align-items: center; gap: 8px;
-  padding: 9px 16px; border-radius: 22px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 9px 10px; border-radius: 22px;
   border: 1.5px solid var(--border-light); background: var(--card);
-  color: var(--text); font-family: var(--font-body); font-size: 14px; font-weight: 700;
-  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  color: var(--text); font-family: var(--font-body); font-size: 13px; font-weight: 700;
+  cursor: pointer; white-space: nowrap; flex: 1; min-width: 0;
   transition: border-color 0.2s, background 0.2s; position: relative;
 }
 .cat-trigger.open { border-color: var(--red); background: rgba(232,50,26,0.08); }
