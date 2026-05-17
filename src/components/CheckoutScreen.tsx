@@ -103,6 +103,15 @@ export default function CheckoutScreen() {
     }).catch(() => {})
   }
 
+  function saveProfileNameOnly(n: string) {
+    if (!userId) return
+    fetch(`${API}/profile/update-name`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: userId, name: n.trim(), phone: '' }),
+    }).catch(() => {})
+  }
+
   function requestTgContact() {
     const tg = window.Telegram?.WebApp
     if (!tg) return
@@ -153,7 +162,7 @@ export default function CheckoutScreen() {
       })
       if (!resp.ok) throw new Error('server')
       saveAddress(address)
-      saveProfile(name, phone)
+      saveProfileNameOnly(name)
       setLastOrderItems(items)
       setOrderNum(orderNum)
       clearCart()
