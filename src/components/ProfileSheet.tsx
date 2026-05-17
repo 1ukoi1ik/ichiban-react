@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '../store/useAppStore'
 import { API } from '../data/api'
@@ -60,6 +61,7 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
   const profile = useAppStore((s) => s.profile)
   const setProfile = useAppStore((s) => s.setProfile)
   const isNew = !profile || profile.new_client
+  const [showCard, setShowCard] = useState(false)
 
   const gender = profile ? guessGender(profile.name) : 'male'
   const avatar = gender === 'female'
@@ -174,10 +176,24 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
               </>
             )}
 
+            {!isNew && profile!.discount > 0 && (
+              <button
+                onClick={() => setShowCard(true)}
+                style={{
+                  width: '100%', marginTop: 16, padding: 14,
+                  background: `linear-gradient(135deg, ${brandRed}, ${brandOrange})`,
+                  border: 'none', borderRadius: 12, color: '#fff',
+                  fontSize: 15, fontWeight: 600, cursor: 'pointer',
+                }}
+              >
+                🎟️ Предъявить скидку
+              </button>
+            )}
+
             {!isNew && (
               <button
                 onClick={() => { onClose(); onHistory() }}
-                style={{ width: '100%', marginTop: 16, padding: 13, background: 'var(--card-hover)', border: '1px solid var(--border)', borderRadius: 12, color: 'var(--text)', fontSize: 14, cursor: 'pointer' }}
+                style={{ width: '100%', marginTop: 10, padding: 13, background: 'var(--card-hover)', border: '1px solid var(--border)', borderRadius: 12, color: 'var(--text)', fontSize: 14, cursor: 'pointer' }}
               >
                 🕐 История заказов
               </button>
@@ -186,6 +202,67 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
             <button onClick={onClose} style={{ width: '100%', marginTop: 8, padding: 13, background: 'var(--card-hover)', border: '1px solid var(--border)', borderRadius: 12, color: 'var(--text)', fontSize: 14, cursor: 'pointer' }}>
               Закрыть
             </button>
+
+            {/* Карточка предъявления скидки */}
+            <AnimatePresence>
+              {showCard && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setShowCard(false)}
+                  style={{ position: 'fixed', inset: 0, zIndex: 1100, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}
+                >
+                  <motion.div
+                    initial={{ scale: 0.85, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.85, opacity: 0 }}
+                    transition={{ type: 'spring', duration: 0.4, bounce: 0.2 }}
+                    onClick={(e) => e.stopPropagation()}
+                    style={{
+                      width: '100%', maxWidth: 340,
+                      background: `linear-gradient(145deg, #1a1a1a, #111)`,
+                      border: `2px solid ${brandOrange}55`,
+                      borderRadius: 24, padding: '32px 28px',
+                      textAlign: 'center', boxShadow: `0 0 40px ${brandRed}33`,
+                    }}
+                  >
+                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 20 }}>
+                      карта постоянного гостя
+                    </div>
+
+                    <div style={{ fontSize: 28, fontWeight: 700, color: '#fff', marginBottom: 6, lineHeight: 1.2 }}>
+                      {profile!.name}
+                    </div>
+                    <div style={{ fontSize: 18, color: 'rgba(255,255,255,0.5)', marginBottom: 28 }}>
+                      {profile!.phone}
+                    </div>
+
+                    <div style={{
+                      background: `linear-gradient(135deg, ${brandRed}, ${brandOrange})`,
+                      borderRadius: 16, padding: '20px 0', marginBottom: 24,
+                      boxShadow: `0 4px 24px ${brandOrange}44`,
+                    }}>
+                      <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', marginBottom: 4 }}>персональная скидка</div>
+                      <div style={{ fontSize: 56, fontWeight: 800, color: '#fff', lineHeight: 1 }}>
+                        {profile!.discount}%
+                      </div>
+                    </div>
+
+                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', lineHeight: 1.5 }}>
+                      Покажите эту карту кассиру<br />для получения скидки в заведении
+                    </div>
+
+                    <button
+                      onClick={() => setShowCard(false)}
+                      style={{ marginTop: 24, width: '100%', padding: 12, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, color: 'rgba(255,255,255,0.6)', fontSize: 14, cursor: 'pointer' }}
+                    >
+                      Закрыть
+                    </button>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
           </motion.div>
       )}
