@@ -263,7 +263,7 @@ export default function MenuScreen() {
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', duration: 0.4, bounce: 0.4 }}
-        style={{ background: `linear-gradient(135deg, ${brand.red}, ${brand.orange})` }}
+        style={{ background: count > 0 ? `linear-gradient(135deg, ${brand.red}, ${brand.orange})` : 'var(--card)' }}
       >
         🛒
         {count > 0 && <span className="fab-badge">{count}</span>}
