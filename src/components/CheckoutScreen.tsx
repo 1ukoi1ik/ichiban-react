@@ -5,6 +5,17 @@ import { BRANDS } from '../data/brands'
 import { API, genOrderNum } from '../data/api'
 
 
+function parseAddress(addr: string) {
+  const parts = addr.split(',').map((s) => s.trim())
+  const housePart = (parts.find((p) => p.match(/^д\s/i)) ?? '').replace(/^д\s+/i, '')
+  const flatPart = (parts.find((p) => p.match(/^кв\s/i)) ?? '').replace(/^кв\s+/i, '')
+  const entrancePart = (parts.find((p) => p.match(/^подъезд\s/i)) ?? '').replace(/^подъезд\s+/i, '')
+  const streetPart =
+    parts.find((p) => p.match(/^(ул|пр|пер|бул|пл|наб|ш|тупик|проезд|аллея)\s/i)) ??
+    parts.find((p) => !p.match(/^(д|кв|подъезд|г|город)\s/i)) ?? ''
+  return { street: streetPart, house: housePart, flat: flatPart, entrance: entrancePart }
+}
+
 export default function CheckoutScreen() {
   const brandKey = useAppStore((s) => s.brandKey)
   const cart = useAppStore((s) => s.cart)
@@ -54,15 +65,11 @@ export default function CheckoutScreen() {
       if (profile.phone) setPhone(profile.phone || '+7')
       const lastAddr = profile.addresses?.[0] ?? profile.address ?? ''
       if (lastAddr) {
-        const parts = lastAddr.split(',').map((s: string) => s.trim())
-        const streetPart = parts.find((p: string) => !p.match(/^д\s/i) && !p.match(/^кв\s/i) && !p.match(/^подъезд\s/i)) ?? ''
-        const housePart = (parts.find((p: string) => p.match(/^д\s/i)) ?? '').replace(/^д\s+/i, '')
-        const flatPart = (parts.find((p: string) => p.match(/^кв\s/i)) ?? '').replace(/^кв\s+/i, '')
-        const entrancePart = (parts.find((p: string) => p.match(/^подъезд\s/i)) ?? '').replace(/^подъезд\s+/i, '')
-        setStreet(streetPart)
-        if (housePart) setHouse(housePart)
-        if (flatPart) setFlat(flatPart)
-        if (entrancePart) setEntrance(entrancePart)
+        const { street: s, house: h, flat: f, entrance: en } = parseAddress(lastAddr)
+        setStreet(s)
+        if (h) setHouse(h)
+        if (f) setFlat(f)
+        if (en) setEntrance(en)
       }
     }
   }, [profile])
@@ -355,16 +362,11 @@ export default function CheckoutScreen() {
             {(profile?.addresses ?? []).map((addr) => (
               <div key={addr}
                 onClick={() => {
-                  // парсим "ул Советская, д 5, кв 12, подъезд 2"
-                  const parts = addr.split(',').map(s => s.trim())
-                  const streetPart = parts.find(p => !p.match(/^д\s/i) && !p.match(/^кв\s/i) && !p.match(/^подъезд\s/i)) ?? ''
-                  const housePart = (parts.find(p => p.match(/^д\s/i)) ?? '').replace(/^д\s+/i, '')
-                  const flatPart = (parts.find(p => p.match(/^кв\s/i)) ?? '').replace(/^кв\s+/i, '')
-                  const entrancePart = (parts.find(p => p.match(/^подъезд\s/i)) ?? '').replace(/^подъезд\s+/i, '')
-                  setStreet(streetPart)
-                  setHouse(housePart)
-                  setFlat(flatPart)
-                  setEntrance(entrancePart)
+                  const { street: s, house: h, flat: f, entrance: en } = parseAddress(addr)
+                  setStreet(s)
+                  setHouse(h)
+                  setFlat(f)
+                  setEntrance(en)
                   setAddrPopupOpen(false)
                 }}
                 style={{ padding: '12px 0', borderBottom: '1px solid var(--border)', fontSize: 14, color: 'var(--text)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
