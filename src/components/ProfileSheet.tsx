@@ -44,7 +44,11 @@ function requestPhone(setProfile: (p: any) => void) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: tgUserId, phone: phone_number, name }),
-      }).catch(() => {})
+      })
+        .then(() => fetch(`${API}/profile/${tgUserId}`))
+        .then((r) => r.json())
+        .then((data) => { if (data.ok && !data.new_client) setProfile(data) })
+        .catch(() => {})
     }
   }
 
