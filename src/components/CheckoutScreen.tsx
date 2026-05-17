@@ -21,6 +21,7 @@ export default function CheckoutScreen() {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [address, setAddress] = useState('')
+  const [addrOpen, setAddrOpen] = useState(false)
   const [comment, setComment] = useState('')
   const [payment, setPayment] = useState('Наличными курьеру')
   const [loading, setLoading] = useState(false)
@@ -102,23 +103,35 @@ export default function CheckoutScreen() {
               <label className="form-label">Номер телефона</label>
               <input className="form-input" type="tel" placeholder="+7 (000) 000-00-00" value={phone} onChange={(e) => setPhone(e.target.value)} />
             </div>
-            <div className="form-group">
+            <div className="form-group" style={{ position: 'relative' }}>
               <label className="form-label">Адрес доставки</label>
-              <input className="form-input" placeholder="Улица, дом, квартира" value={address} onChange={(e) => setAddress(e.target.value)} />
-              {profile?.addresses && profile.addresses.length > 0 && (
-                <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <input
+                className="form-input"
+                placeholder="Улица, дом, квартира"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                onFocus={() => setAddrOpen(true)}
+                onBlur={() => setTimeout(() => setAddrOpen(false), 150)}
+              />
+              {addrOpen && profile?.addresses && profile.addresses.length > 0 && (
+                <div style={{
+                  position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100,
+                  background: 'var(--card)', border: '1px solid var(--border)',
+                  borderRadius: 10, marginTop: 4, overflow: 'hidden',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+                }}>
                   {profile.addresses.map((addr) => (
-                    <button
+                    <div
                       key={addr}
-                      type="button"
-                      onClick={() => setAddress(addr)}
+                      onMouseDown={() => { setAddress(addr); setAddrOpen(false) }}
                       style={{
-                        textAlign: 'left', background: 'var(--card)', border: '1px solid var(--border)',
-                        borderRadius: 8, padding: '7px 10px', fontSize: 13, color: 'var(--sub)', cursor: 'pointer',
+                        padding: '10px 14px', fontSize: 13, color: 'var(--text)',
+                        cursor: 'pointer', borderBottom: '1px solid var(--border)',
+                        display: 'flex', alignItems: 'center', gap: 8,
                       }}
                     >
-                      📍 {addr}
-                    </button>
+                      <span style={{ color: 'var(--sub)' }}>📍</span> {addr}
+                    </div>
                   ))}
                 </div>
               )}
