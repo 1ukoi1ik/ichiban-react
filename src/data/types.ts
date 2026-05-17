@@ -43,7 +43,8 @@ export interface Profile {
   new_client?: boolean
   name: string
   phone: string
-  address: string
+  address?: string
+  addresses?: string[]
   total_orders: number
   month_sum: number
   discount: number

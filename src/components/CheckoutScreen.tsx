@@ -30,9 +30,19 @@ export default function CheckoutScreen() {
     if (profile) {
       if (profile.name) setName(profile.name)
       if (profile.phone) setPhone(profile.phone)
-      if (profile.address) setAddress(profile.address)
+      const lastAddr = profile.addresses?.[0] ?? profile.address ?? ''
+      if (lastAddr) setAddress(lastAddr)
     }
   }, [profile])
+
+  function saveAddress(addr: string) {
+    if (!userId || !addr.trim()) return
+    fetch(`${API}/profile/address`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: userId, address: addr.trim() }),
+    }).catch(() => {})
+  }
 
   async function placeOrder() {
     if (!name.trim()) { setError('Введите имя'); return }
@@ -58,6 +68,7 @@ export default function CheckoutScreen() {
         }),
       })
       if (!resp.ok) throw new Error('server')
+      saveAddress(address)
       setOrderNum(orderNum)
       clearCart()
       window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred?.('success')
@@ -94,6 +105,23 @@ export default function CheckoutScreen() {
             <div className="form-group">
               <label className="form-label">Адрес доставки</label>
               <input className="form-input" placeholder="Улица, дом, квартира" value={address} onChange={(e) => setAddress(e.target.value)} />
+              {profile?.addresses && profile.addresses.length > 0 && (
+                <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {profile.addresses.map((addr) => (
+                    <button
+                      key={addr}
+                      type="button"
+                      onClick={() => setAddress(addr)}
+                      style={{
+                        textAlign: 'left', background: 'var(--card)', border: '1px solid var(--border)',
+                        borderRadius: 8, padding: '7px 10px', fontSize: 13, color: 'var(--sub)', cursor: 'pointer',
+                      }}
+                    >
+                      📍 {addr}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="form-group">
               <label className="form-label">Комментарий</label>
