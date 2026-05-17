@@ -73,7 +73,7 @@ export const useAppStore = create<AppStore>()(
       setOrderNum: (orderNum) => set({ orderNum }),
       setUserId: (userId) => set({ userId }),
     }),
-    { name: 'ichi_store', partialize: (s) => ({ cart: s.cart, brandKey: s.brandKey, orderNum: s.orderNum }) }
+    { name: 'ichi_store', partialize: (s) => ({ cart: s.cart, brandKey: s.brandKey, orderNum: s.orderNum, userId: s.userId }) }
   )
 )
 

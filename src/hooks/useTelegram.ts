@@ -22,6 +22,7 @@ declare global {
 export function useTelegram() {
   const setUserId = useAppStore((s) => s.setUserId)
   const setProfile = useAppStore((s) => s.setProfile)
+  const storedUserId = useAppStore((s) => s.userId)
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp
@@ -30,15 +31,26 @@ export function useTelegram() {
       tg.expand()
     }
 
-    const uid = tg?.initDataUnsafe?.user?.id ?? null
-    if (uid) {
+    function loadProfile(uid: number) {
       setUserId(uid)
       fetch(`${API}/profile/${uid}`)
         .then((r) => r.json())
-        .then((data) => {
-          if (data.ok) setProfile(data)
-        })
+        .then((data) => { if (data.ok && !data.new_client) setProfile(data) })
         .catch(() => {})
     }
-  }, [setUserId, setProfile])
+
+    const uid = tg?.initDataUnsafe?.user?.id
+    if (uid) {
+      loadProfile(uid)
+    } else if (storedUserId) {
+      loadProfile(storedUserId)
+    } else {
+      // Telegram может заполнить initDataUnsafe чуть позже
+      const t = setTimeout(() => {
+        const uid2 = window.Telegram?.WebApp?.initDataUnsafe?.user?.id
+        if (uid2) loadProfile(uid2)
+      }, 500)
+      return () => clearTimeout(t)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 }
