@@ -15,7 +15,7 @@ export default function BrandPicker() {
   return (
     <div className="screen screen-picker">
       <div className="picker-header">
-        <h1 className="picker-title">Ichiban</h1>
+        <h1 className="picker-title">Выберите доставку</h1>
         <p className="picker-sub">Выберите кухню</p>
       </div>
       <div className="picker-grid">
