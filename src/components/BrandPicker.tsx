@@ -32,7 +32,7 @@ export default function BrandPicker() {
             >
               <div className="picker-card-img-wrap">
                 <img src={BRAND_THUMBS[key]} alt={brand.name} className="picker-card-img" draggable={false} />
-                <div className="picker-card-gradient" style={{ background: `linear-gradient(to bottom, transparent 20%, ${brand.red}cc 100%)` }} />
+                <div className="picker-card-gradient" style={{ background: `linear-gradient(to bottom, transparent 60%, ${brand.red}55 100%)` }} />
               </div>
               <span className="picker-name">{brand.name}</span>
             </motion.button>
