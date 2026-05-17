@@ -31,11 +31,13 @@ interface Props {
 }
 
 export default function HistorySheet({ open, onClose, onOpenCart, brandRed, brandOrange }: Props) {
-  const userId = useAppStore((s) => s.userId)
+  const storeUserId = useAppStore((s) => s.userId)
   const addToCart = useAppStore((s) => s.addToCart)
   const [orders, setOrders] = useState<HistoryOrder[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
+
+  const userId = storeUserId ?? (window.Telegram?.WebApp?.initDataUnsafe?.user?.id ?? null)
 
   useEffect(() => {
     if (!open || !userId) return
