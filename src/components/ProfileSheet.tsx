@@ -280,7 +280,6 @@ export default function ProfileSheet({ open, onClose, onHistory, brandRed, brand
                               transition: 'border 0.15s',
                             }}
                           />
-                          <div style={{ fontSize: 11, color: 'var(--sub)', marginTop: 4 }}>{a.label}</div>
                         </div>
                       ))}
                     </div>
