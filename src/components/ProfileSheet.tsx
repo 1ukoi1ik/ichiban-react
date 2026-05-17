@@ -17,21 +17,25 @@ function guessGender(name: string) {
 function requestPhone(userId: number | null, setProfile: (p: any) => void) {
   const tg = window.Telegram?.WebApp
   if (!tg) return
-  tg.requestContact((ok: boolean, contact: any) => {
-    if (!ok || !contact?.contact) return
-    const { phone_number, first_name, last_name } = contact.contact
+  const _tg = tg
+
+  function onContact(data: any) {
+    _tg.offEvent('contactRequested', onContact)
+    if (data?.status !== 'sent') return
+    const contact = data?.responseUnsafe?.contact ?? data?.contact
+    if (!contact) return
+    const { phone_number, first_name, last_name } = contact
     const name = [first_name, last_name].filter(Boolean).join(' ')
     setProfile({
       ok: true,
       new_client: true,
-      name: name || first_name || '',
+      name: name || '',
       phone: phone_number || '',
       address: '',
       total_orders: 0,
       month_sum: 0,
       discount: 0,
     })
-    // сохраняем телефон на сервере если есть userId
     if (userId && phone_number) {
       fetch(`${API}/profile/phone`, {
         method: 'POST',
@@ -39,7 +43,10 @@ function requestPhone(userId: number | null, setProfile: (p: any) => void) {
         body: JSON.stringify({ user_id: userId, phone: phone_number, name }),
       }).catch(() => {})
     }
-  })
+  }
+
+  _tg.onEvent('contactRequested', onContact)
+  _tg.requestContact()
 }
 
 export default function ProfileSheet({ open, onClose, brandRed, brandOrange }: Props) {

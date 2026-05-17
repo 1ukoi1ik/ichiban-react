@@ -9,7 +9,9 @@ declare global {
         ready(): void
         expand(): void
         initDataUnsafe?: { user?: { id?: number; first_name?: string; phone_number?: string } }
-        requestContact(cb: (ok: boolean, contact: any) => void): void
+        requestContact(cb?: (status: string, contact?: any) => void): void
+        onEvent(event: string, cb: (data: any) => void): void
+        offEvent(event: string, cb: (data: any) => void): void
         HapticFeedback?: {
           notificationOccurred(type: 'error' | 'success' | 'warning'): void
           selectionChanged?(): void
